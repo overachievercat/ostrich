@@ -71,7 +71,9 @@
   .emojis button{width:54px;height:54px;border-radius:50%;border:1px solid var(--line);background:var(--card);font-size:26px;line-height:1;cursor:pointer;padding:0}
   .emojis button[aria-pressed="true"]{border:2px solid var(--ink);background:var(--peach)}
   .feelrow{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
-  .sample{background:var(--sand);border-radius:14px;padding:10px 14px;font-size:14px;margin-top:14px}
+  .sample{background:var(--sand);border:1px solid var(--sand-line);border-radius:16px;padding:12px 16px;font-size:15px;margin:0 0 14px}
+  .sample b{display:block;font-size:13px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px}
+  form.demo input{background:#FBF3E2;border-style:dashed}
   [hidden]{display:none!important}
   body.darkbody{background:var(--ink)}
   .dark{color:#E8EDF5}
@@ -144,8 +146,9 @@
 
   <!-- Three numbers (screen 3) -->
   <section id="v-enter" hidden>
-    <h1>Three numbers is all it takes.</h1>
-    <p class="soft">A rough guess is fine, and you can leave any of them empty. It all stays on this device, and you can change it later.</p>
+    <div id="sampleNote" class="sample" hidden><b>Demo · made-up numbers</b>These belong to a made-up member, not to you. Ostrich can't see your accounts or your money. It only knows what you type here, and that stays on this device.</div>
+    <h1 id="enterTitle">Three numbers is all it takes.</h1>
+    <p class="soft" id="enterSub">A rough guess is fine, and you can leave any of them empty. It all stays on this device, and you can change it later.</p>
     <form id="form" novalidate>
       <div class="field">
         <div class="row" style="border:0;padding:0"><label for="cash">Cash, in checking and savings</label></div>
@@ -160,9 +163,9 @@
         <div class="row" style="border:0;padding:0"><label for="invest">Anything invested, including crypto</label></div>
         <input id="invest" inputmode="decimal" autocomplete="off" placeholder="0">
       </div>
-      <div id="sampleNote" class="sample" hidden>These are made-up numbers, so you can try Ostrich without typing your own.</div>
       <button class="btn" type="submit" style="margin-top:24px">See my number</button>
       <button class="btn outline" type="button" id="useSample">Try the demo</button>
+      <button class="btn outline" type="button" id="useOwn" hidden>Use my own numbers instead</button>
       <p class="fine">Not financial advice. The demo shows made-up numbers.</p>
     </form>
   </section>
@@ -321,7 +324,7 @@
     if (!list.length){ show('v-welcome'); return; }
     var cur = list[list.length-1];
     var nw = cur.cash + cur.invest - cur.owe;
-    $('when').textContent = cur.date === today() ? 'Your number today' + (cur.sample ? ' (made up)' : '') : 'Your number on ' + niceDate(cur.date);
+    $('when').textContent = cur.sample ? "A made-up member's number, demo only" : (cur.date === today() ? 'Your number today' : 'Your number on ' + niceDate(cur.date));
     $('nw').textContent = money(nw);
     $('parts').textContent = hidden ? '' : money(cur.cash)+' cash + '+money(cur.invest)+' invested - '+money(cur.owe)+' owed';
     $('feltLine').textContent = cur.feeling ? 'Before you looked: ' + cur.feeling.toLowerCase() + '.' : "Before you looked, you skipped the question. That's fine.";
@@ -454,7 +457,7 @@
     if (feeling === 'Very tense' || feeling === 'Too much') setHidden(true);
     var list = load(), cur = list[list.length-1];
     fillForm(cur ? {cash:cur.cash, invest:cur.invest, owe:cur.owe} : null);
-    usingSample = !!(cur && cur.sample); $('sampleNote').hidden = !usingSample;
+    setDemo(!!(cur && cur.sample));
     show('v-enter');
     if (demo){ demo = false; $('useSample').click(); }
   }
@@ -464,13 +467,18 @@
   $('toTalk').onclick = function(){ go('v-talk'); };
   $('talkBack').onclick = function(){ show(lastView); };
 
-  $('useSample').onclick = function(){
-    usingSample = true;
-    fillForm({cash: 730, invest: 60, owe: 16330});
-    $('sampleNote').hidden = false;
-  };
+  function setDemo(on){
+    usingSample = on;
+    $('sampleNote').hidden = !on;
+    $('form').className = on ? 'demo' : '';
+    $('useSample').hidden = on; $('useOwn').hidden = !on;
+    $('enterTitle').textContent = on ? "A made-up member's three numbers." : 'Three numbers is all it takes.';
+    $('enterSub').textContent = on ? 'Tap See my number to try Ostrich with them. Nothing here is yours.' : 'A rough guess is fine, and you can leave any of them empty. It all stays on this device, and you can change it later.';
+  }
+  $('useSample').onclick = function(){ fillForm({cash: 730, invest: 60, owe: 16330}); setDemo(true); };
+  $('useOwn').onclick = function(){ fillForm(null); setDemo(false); $('cash').focus(); };
   ['cash','invest','owe'].forEach(function(id){
-    $(id).addEventListener('input', function(){ usingSample = false; $('sampleNote').hidden = true; });
+    $(id).addEventListener('input', function(){ if (usingSample) setDemo(false); });
   });
 
   $('form').onsubmit = function(e){
@@ -492,7 +500,7 @@
     var list = load(); var cur = list[list.length-1];
     if (!cur || cur.date !== today()) { startLook(); return; }
     feeling = cur.feeling || null;
-    fillForm(cur); usingSample = !!cur.sample; $('sampleNote').hidden = !usingSample;
+    fillForm(cur); setDemo(!!cur.sample);
     show('v-enter');
   };
 
