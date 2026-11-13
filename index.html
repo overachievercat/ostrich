@@ -3,243 +3,246 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#F4F1EA">
 <title>Ostrich: your daily look</title>
 <meta name="description" content="A private daily look at your money. Every number is welcome. Your numbers stay on your device.">
 <style>
+  /* Fonts ship with the app, so opening Ostrich sends no request anywhere. */
+  @font-face{font-family:'Newsreader';src:url(fonts/newsreader-latin-400-normal.woff2) format('woff2');font-weight:400;font-display:swap}
+  @font-face{font-family:'Inter';src:url(fonts/inter-latin-400-normal.woff2) format('woff2');font-weight:400;font-display:swap}
+  @font-face{font-family:'Inter';src:url(fonts/inter-latin-600-normal.woff2) format('woff2');font-weight:600;font-display:swap}
   :root{
-    --bg:#FBF7F0; --card:#FFFFFF; --ink:#2B2622; --soft:#6E655D; --line:#E8E0D4;
-    --accent:#4A5A7A; --accent-ink:#FFFFFF; --tint:#EEF0F5; --egg:#F3E9D8;
-    --r:18px;
-  }
-  @media (prefers-color-scheme: dark){
-    :root{ --bg:#1C1A18; --card:#262320; --ink:#F4EFE8; --soft:#B5ACA2; --line:#3A3530;
-      --accent:#A9B8D8; --accent-ink:#1C1A18; --tint:#2C2F38; --egg:#332C22; }
+    --bg:#F4F1EA; --ink:#14213D; --soft:#4A5568; --line:#DDD8CB; --card:#FBFAF6;
+    --green:#4F6F5A; --green-ink:#2F4A3A; --sage:#E3EBE1; --sage2:#DCE6DA;
+    --peach:#F2B880; --sand:#F2D7A1; --sand-line:#E5C68E; --beak:#E9A15B;
+    --serif:'Newsreader',Georgia,serif; --sans:'Inter',Arial,sans-serif;
   }
   *{box-sizing:border-box}
-  html,body{margin:0;background:var(--bg);color:var(--ink);
-    font:17px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-  main{max-width:440px;margin:0 auto;padding:28px 20px 48px}
-  h1{font-size:28px;line-height:1.2;margin:8px 0 6px;font-weight:700;letter-spacing:-.01em}
-  h2{font-size:15px;font-weight:600;color:var(--soft);margin:28px 0 8px;text-transform:none}
-  p{margin:0 0 12px}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--sans)}
+  main{max-width:430px;margin:0 auto;padding:20px 22px 40px}
+  h1{font-family:var(--serif);font-weight:400;font-size:32px;line-height:1.1;margin:6px 0 10px}
+  h1.big{font-size:38px}
+  h3{font-family:var(--serif);font-weight:400;font-size:19px;line-height:1.2;margin:0 0 4px}
+  p{margin:0 0 10px}
   .soft{color:var(--soft)}
   .small{font-size:14px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:14px 0}
-  button,.btn{font:inherit;font-weight:600;border:0;border-radius:14px;padding:14px 18px;width:100%;
-    background:var(--accent);color:var(--accent-ink);cursor:pointer;min-height:52px}
-  button.quiet{background:transparent;color:var(--accent);border:1px solid var(--line);font-weight:500}
-  button.link{background:none;color:var(--accent);padding:8px 0;min-height:0;width:auto;font-weight:500;text-decoration:underline}
-  button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-  label{display:block;font-weight:600;margin:16px 0 4px}
-  .hint{display:block;font-weight:400;font-size:14px;color:var(--soft)}
-  .money{display:flex;align-items:center;border:1px solid var(--line);border-radius:12px;background:var(--card);padding:0 14px}
-  .money span{color:var(--soft);font-size:18px}
-  .money input{border:0;background:transparent;color:var(--ink);font:inherit;font-size:20px;padding:12px 8px;width:100%;outline:none}
-  .big{font-size:44px;font-weight:700;letter-spacing:-.02em;margin:6px 0 2px;font-variant-numeric:tabular-nums;word-break:break-all}
-  .looked{font-size:22px;font-weight:600;margin:10px 0 0}
-  .row{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}
-  .row:first-child{border-top:0}
-  .stack>*+*{margin-top:10px}
-  .ostrich{display:block;margin:0 auto}
   .center{text-align:center}
-  .pill{display:inline-block;background:var(--tint);color:var(--ink);border-radius:999px;padding:4px 12px;font-size:14px}
-  .sample{background:var(--egg);border-radius:12px;padding:10px 12px;font-size:14px;margin-top:12px}
-  .toggle{display:flex;align-items:center;justify-content:space-between;gap:12px}
-  .toggle input{width:22px;height:22px;accent-color:var(--accent)}
+  .topbar{display:flex;justify-content:space-between;align-items:center;min-height:48px;margin-bottom:10px;gap:8px}
+  .brand{font-family:var(--serif);font-size:24px}
+  .pills{display:flex;gap:8px;align-items:center}
+  .pill{min-height:40px;display:inline-flex;align-items:center;padding:0 14px;border-radius:999px;font:600 14px var(--sans);cursor:pointer}
+  .pill.sage{background:var(--sage);color:var(--green-ink);border:0}
+  .pill.plain{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px 18px;margin:12px 0}
+  .card .label{font-weight:600;color:var(--green);margin:0 0 2px}
+  .tag{display:inline-block;background:var(--sage);color:var(--green-ink);border-radius:999px;padding:2px 10px;font-size:13px;font-weight:600;margin-top:6px}
+  button{font-family:var(--sans)}
+  .btn{display:block;width:100%;min-height:52px;border-radius:999px;border:0;background:var(--ink);color:var(--bg);font-size:17px;font-weight:600;cursor:pointer}
+  .btn.outline{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+  .btn+.btn{margin-top:10px}
+  .lnk{background:none;border:0;padding:6px 0;color:var(--green);text-decoration:underline;font:600 15px var(--sans);cursor:pointer}
+  .lnks{display:flex;justify-content:center;gap:6px 18px;flex-wrap:wrap;margin-top:12px}
+  button:focus-visible,input:focus-visible{outline:3px solid var(--peach);outline-offset:2px}
+  .fine{color:var(--soft);font-size:14px;text-align:center;margin-top:14px}
+  .rel{display:flex;gap:14px;align-items:flex-start}
+  .rel .icon{font-size:30px;line-height:1}
+  .chips{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:14px 0 4px}
+  .chips button{min-height:56px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:600 13px/1.15 var(--sans);padding:6px 4px;cursor:pointer}
+  .chips button[aria-pressed="true"]{background:var(--peach);border:2px solid var(--ink)}
+  .field{margin:16px 0 0}
+  .field .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .field label{font-weight:600}
+  .field input{width:100%;height:48px;border:1.5px solid var(--ink);border-radius:16px;background:var(--card);padding:0 16px;font:20px var(--sans);color:var(--ink);margin-top:6px}
+  .field .hint{color:var(--soft);font-size:14px;margin-top:4px}
+  .looked{display:flex;align-items:center;gap:12px;background:var(--sand);border:1px solid var(--sand-line);border-radius:20px;padding:10px 16px;margin-bottom:14px}
+  .looked span{font-size:19px;font-weight:600}
+  .numlabel{color:var(--soft);margin:0}
+  .number{font-family:var(--serif);font-size:56px;line-height:1.05;letter-spacing:-.01em;margin:2px 0 6px;font-variant-numeric:tabular-nums;word-break:break-all}
+  .change{font-size:17px;margin:0 0 2px}
+  .row{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}
+  .row:first-child{border-top:0;padding-top:2px}
+  .row:last-child{padding-bottom:2px}
+  .section{font-weight:600;margin:20px 0 6px}
+  .sample{background:var(--sand);border-radius:14px;padding:10px 14px;font-size:14px;margin-top:14px}
   [hidden]{display:none!important}
-  .dialog{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center;padding:16px}
-  .dialog .card{width:100%;max-width:440px}
-  .topbar{display:flex;justify-content:space-between;align-items:center;margin:-8px 0 12px}
-  .topbar .brand{font-weight:700;font-size:16px}
-  .topbar button{width:auto;min-height:40px;padding:8px 14px;font-size:15px}
-  .choices{display:grid;gap:10px;margin:18px 0}
-  .choices button{background:var(--card);color:var(--ink);border:1px solid var(--line);font-weight:500;text-align:left}
-  .choices button[aria-pressed="true"]{border:2px solid var(--accent);background:var(--tint)}
-  .cover{position:fixed;inset:0;background:var(--bg);z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center;user-select:none;-webkit-user-select:none}
-  .cover button{max-width:260px}
-  pre{background:var(--tint);border-radius:12px;padding:12px;font-size:13px;overflow:auto;white-space:pre-wrap;word-break:break-word;margin:10px 0}
-  .help h3{font-size:17px;margin:0 0 4px}
-  .help a{color:var(--accent)}
-  .linkrow{display:flex;flex-wrap:wrap;gap:8px 18px;justify-content:center;margin-top:18px}
-  footer{margin-top:36px;font-size:13px;color:var(--soft);text-align:center}
+  body.darkbody{background:var(--ink)}
+  .dark{color:#E8EDF5}
+  .dark h1{color:var(--sand)}
+  .dark .brand{color:#F4F1EA}
+  .dark .pill.sage{background:#22345A;color:var(--sand)}
+  .dark pre{background:#0E182D;border:1px solid #3A4C75;border-radius:16px;padding:14px 16px;color:#E8EDF5;font-size:14px;white-space:pre-wrap;word-break:break-word}
+  .dark b{color:var(--sand)}
+  .dark .btn.outline{border-color:#E8EDF5;color:#E8EDF5}
+  .cover{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:22px;user-select:none;-webkit-user-select:none}
+  .cover .panel{background:var(--sage2);border-radius:24px;padding:28px 22px;text-align:center;width:100%;max-width:386px;color:var(--green-ink)}
+  .cover h3{font-size:26px;color:var(--ink);margin:6px 0}
+  .cover .btn{margin-top:16px}
+  .sleep .ost-lift{animation:none;transform:rotate(135deg)}
+  .dialog{position:fixed;inset:0;background:rgba(20,33,61,.35);display:flex;align-items:flex-end;justify-content:center;padding:16px;z-index:40}
+  .dialog .card{width:100%;max-width:430px}
+  .ost-lift{transform-box:view-box;transform-origin:46px 37px;animation:ostLift .9s cubic-bezier(.2,.7,.3,1) .35s both}
+  @keyframes ostLift{from{transform:rotate(135deg)}to{transform:rotate(0deg)}}
+  @media (prefers-reduced-motion:reduce){.ost-lift{animation:none}}
 </style>
 </head>
 <body>
-<main>
-  <div class="topbar"><span class="brand">Ostrich</span><button class="quiet" id="hideAll" aria-label="Hide all: cover the screen">Hide all</button></div>
+<template id="ostrichArt">
+  <svg width="62" height="59" viewBox="0 0 84 80" aria-hidden="true" style="flex-shrink:0"><path d="M2 75 Q42 71 82 75" stroke="#D9B98C" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M56 64.4 C59.4 64.4 60.2 69 60.2 70.8 C60.2 73.2 58.3 74.2 56 74.2 C53.7 74.2 51.8 73.2 51.8 70.8 C51.8 69 52.6 64.4 56 64.4 Z" fill="#FBFAF6" stroke="#D9B98C" stroke-width="1"/><path d="M65.5 65 C68.9 65 69.7 69.6 69.7 71.4 C69.7 73.8 67.8 74.8 65.5 74.8 C63.2 74.8 61.3 73.8 61.3 71.4 C61.3 69.6 62.1 65 65.5 65 Z" fill="#FBFAF6" stroke="#D9B98C" stroke-width="1"/><path d="M31 46 L29.5 60 L31.5 73.5 M39 46 L40.5 60 L38.5 73.5" stroke="#14213D" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M31.5 73.5 L36.5 73.5 M38.5 73.5 L43.5 73.5 M32 73.3 L34 72 M39 73.3 L41 72" stroke="#14213D" stroke-width="2.4" stroke-linecap="round"/><path d="M17 37 Q14 28 21 27 Q18 32 22 34 Q19 24 26 25 Q22 30 25 33 Z" fill="#FBFAF6" stroke="#14213D" stroke-width="1.2" stroke-linejoin="round"/><ellipse cx="34" cy="38" rx="16.5" ry="11" fill="#14213D"/><path d="M24 37 Q34 29 45 35 Q37 42 26 41 Z" fill="#FBFAF6"/><g class="ost-lift"><path d="M46 37 C51.5 28 51.5 19 48.5 12" stroke="#14213D" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="48.5" cy="10" r="6" fill="#14213D"/><path d="M53 8.6 Q61.5 9.4 62.2 11.4 Q59.6 13.2 53 12.6 Z" fill="#E9A15B"/><circle cx="50" cy="8.6" r="2.3" fill="#F4F1EA"/><circle cx="50.5" cy="8.8" r="1.15" fill="#14213D"/><path d="M48.2 6.4 L46.9 4.6 M50 5.9 L49.8 3.9 M51.8 6.3 L52.8 4.6" stroke="#14213D" stroke-width="1.1" stroke-linecap="round"/></g></svg>
+</template>
+<main id="main">
 
-  <!-- Welcome -->
-  <section id="v-welcome" hidden>
-    <svg class="ostrich" width="120" height="120" viewBox="0 0 120 120" aria-hidden="true">
-      <ellipse cx="60" cy="86" rx="34" ry="22" fill="var(--egg)"/>
-      <path d="M60 70 C58 48 62 34 70 26" stroke="var(--ink)" stroke-width="6" fill="none" stroke-linecap="round"/>
-      <circle cx="73" cy="23" r="9" fill="var(--ink)"/>
-      <path d="M81 23 L92 26 L81 28 Z" fill="var(--accent)"/>
-      <circle cx="75" cy="21" r="1.8" fill="var(--bg)"/>
-    </svg>
-    <h1 class="center">Ostrich</h1>
-    <p class="center">A private daily look at your money.<br>Every number is welcome.</p>
-    <div class="card small">
-      <p><strong>Your numbers stay on this device.</strong> Ostrich has no account and no server for them. Nothing you type here is sent anywhere.</p>
-      <p class="soft" style="margin:0">Ostrich won't tell you what's right or wrong to do with your money. It shows you where you are.</p>
+  <div class="topbar" id="topbar">
+    <span class="brand">Ostrich</span>
+    <div class="pills">
+      <button class="pill plain" id="hideAmt" hidden>Hide amounts</button>
+      <button class="pill sage" id="hideAll" aria-label="Hide all: cover the screen">Hide all</button>
     </div>
-    <button id="start">Take a look</button>
+  </div>
+
+  <!-- Welcome (screen 1) -->
+  <section id="v-welcome" hidden>
+    <h1 class="big">You have two relationships with money.</h1>
+    <p class="soft">Money is not only math. Fear, hope, shame and pride show up too, and they are all welcome here.</p>
+    <div class="card rel"><span class="icon" aria-hidden="true">🔢</span><div><h3>The number</h3><p class="soft" style="margin:0">What you have and what you owe.</p></div></div>
+    <div class="card rel"><span class="icon" aria-hidden="true">💭</span><div><h3>The feeling</h3><p class="soft" style="margin:0">What it is like to look at that number today.</p></div></div>
+    <p>Ostrich keeps both, privately on your device. It has no account and no server for your numbers, and nothing you type is sent anywhere.</p>
+    <button class="btn" id="start" style="margin-top:22px">Next</button>
+    <div class="lnks"><button class="lnk" id="startDemo">Try the demo</button></div>
+    <p class="fine">Not therapy or financial advice. Ostrich never takes a cut of your money.</p>
   </section>
 
   <!-- How does it feel to look? (screen 48) -->
   <section id="v-feel" hidden>
     <h1>How does it feel to look at your money?</h1>
     <p class="soft">There is no right answer. This only sets your pace.</p>
-    <div class="choices" id="feelChoices">
+    <div class="chips" id="feelChoices">
       <button type="button" data-feel="Calm">Calm</button>
       <button type="button" data-feel="A bit tense">A bit tense</button>
       <button type="button" data-feel="Tense">Tense</button>
       <button type="button" data-feel="Very tense">Very tense</button>
       <button type="button" data-feel="Too much">Too much</button>
     </div>
-    <div class="card small" id="gentle" hidden>
-      <p><strong>Starting gently.</strong> Amounts start hidden, and you can show them when you're ready. You can change this any time.</p>
-      <p style="margin:0">If it feels like too much today, that's okay. <button class="link" type="button" id="feelTalk">Want to talk to someone?</button></p>
+    <div class="card" id="gentle" hidden>
+      <p class="label">Starting gently</p>
+      <p style="margin:0">Amounts start hidden, and you can show them when you're ready. You can change this whenever you like. <button class="lnk" type="button" id="feelTalk" style="padding:0">Want to talk to someone?</button></p>
     </div>
+    <div class="card">
+      <p class="label">Not a score</p>
+      <p style="margin:0">Ostrich does not grade this answer or share it. It stays on this device, and Ostrich is not therapy.</p>
+    </div>
+    <button class="btn" id="feelNext" style="margin-top:22px">Next</button>
+    <div class="lnks"><button class="lnk" type="button" id="feelSkip">Skip this question</button></div>
+  </section>
+
+  <!-- Three numbers (screen 3) -->
+  <section id="v-enter" hidden>
+    <h1>Three numbers is all it takes.</h1>
+    <p class="soft">A rough guess is fine, and you can leave any of them empty. It all stays on this device, and you can change it later.</p>
+    <form id="form" novalidate>
+      <div class="field">
+        <div class="row" style="border:0;padding:0"><label for="cash">Cash, in checking and savings</label></div>
+        <input id="cash" inputmode="decimal" autocomplete="off" placeholder="0">
+      </div>
+      <div class="field">
+        <div class="row" style="border:0;padding:0"><label for="owe">Balances you owe, in total</label></div>
+        <input id="owe" inputmode="decimal" autocomplete="off" placeholder="0">
+        <p class="hint">Cards, installments, loans, a mortgage. A starting point, not blame.</p>
+      </div>
+      <div class="field">
+        <div class="row" style="border:0;padding:0"><label for="invest">Anything invested, including crypto</label></div>
+        <input id="invest" inputmode="decimal" autocomplete="off" placeholder="0">
+      </div>
+      <div id="sampleNote" class="sample" hidden>These are made-up numbers, so you can try Ostrich without typing your own.</div>
+      <button class="btn" type="submit" style="margin-top:24px">See my number</button>
+      <button class="btn outline" type="button" id="useSample">Try the demo</button>
+      <p class="fine">Not financial advice. The demo shows made-up numbers.</p>
+    </form>
+  </section>
+
+  <!-- Daily look (screen 20) -->
+  <section id="v-result" hidden>
+    <div class="looked"><span id="artLooked"></span><span>You looked.</span></div>
+    <p class="numlabel" id="when">Your number today</p>
+    <div class="number" id="nw"></div>
+    <p class="change" id="compare"></p>
+    <p class="soft small" id="parts" style="margin:0"></p>
+    <p class="soft small" id="feltLine" hidden style="margin-top:6px"></p>
+
+    <p class="section">Your looks</p>
+    <div class="card" id="history" style="margin-top:0"></div>
+
     <div class="card small">
-      <p style="margin:0"><strong>Not a score.</strong> Ostrich doesn't grade this answer or share it. It stays on this device, and Ostrich is not therapy.</p>
+      <p class="label">Where your numbers are</p>
+      <p style="margin:0">Only on this device, in this browser. Ostrich has no server for them, and nothing was sent anywhere. If you clear your browser's data, your looks go with it.</p>
     </div>
-    <div class="stack">
-      <button id="feelNext">Next</button>
-      <button class="link" type="button" id="feelSkip">Skip this question</button>
+
+    <div class="lnks">
+      <button class="lnk" type="button" id="toSent">What was sent?</button>
+      <button class="lnk" type="button" id="toTalk">Want to talk to someone?</button>
     </div>
+
+    <button class="btn" id="again" style="margin-top:18px">Change today's numbers</button>
+    <button class="btn outline" id="copy">Copy my looks (CSV)</button>
+    <div class="lnks"><button class="lnk" id="wipe">Delete everything</button></div>
+    <p class="fine" id="copied" aria-live="polite"></p>
   </section>
 
   <!-- What was sent? (screen 25) -->
   <section id="v-sent" hidden>
     <h1>What was sent?</h1>
-    <div class="card">
-      <p style="margin:0"><strong>Nothing.</strong> This prototype has no AI yet, and its code makes no network requests. Your numbers, your feeling and your history stay on this device.</p>
-    </div>
-    <h2>When the private AI reading arrives (on the roadmap)</h2>
-    <p class="small">Only totals like these would go to the AI, never account names, institutions or wallet addresses. The reading would run in a sealed, private computer on NEAR AI Cloud, so no one, including Ostrich, could see them. Today, none of this is sent:</p>
+    <p><b>Nothing.</b> This prototype has no AI yet, and its code makes no network requests.</p>
+    <p>When the private AI reading arrives, only totals like these would go to it. No account names, no institutions, and no wallet addresses. Today, none of this is sent:</p>
     <pre id="sentJson"></pre>
-    <p class="small soft">Your feeling and your history would stay on this device unless you chose to include them. Check it yourself: the code is open source.</p>
-    <button class="quiet" id="sentBack">Back</button>
+    <p><b>Your history</b> stays on this device.</p>
+    <p><b>Your feelings</b> stay on this device unless you choose to include them.</p>
+    <p><b>The reading</b> would run in a sealed, private computer on NEAR AI Cloud. (On the roadmap.)</p>
+    <p><b>Check it yourself:</b> the code is open source.</p>
+    <button class="btn outline" id="sentBack" style="margin-top:20px">Close</button>
   </section>
 
   <!-- Want to talk to someone? (screen 34) -->
   <section id="v-talk" hidden>
     <h1>Want to talk to someone?</h1>
-    <p>Ostrich is not therapy, and you don't have to do this alone. Free options come first, always.</p>
-    <div class="card help small stack">
-      <div><h3>A nonprofit credit counselor</h3><p style="margin:0">Free or low-cost help with debt and a plan. Find one through the National Foundation for Credit Counseling: <a href="https://www.nfcc.org/">nfcc.org</a></p></div>
-      <div><h3>Free tax help, and money you may be owed</h3><p style="margin:0">IRS volunteer sites (VITA) prepare taxes for free if you qualify: <a href="https://www.irs.gov/individuals/free-tax-return-preparation-for-qualifying-taxpayers">irs.gov</a></p></div>
-      <div><h3>Someone you trust</h3><p style="margin:0">A friend or family member. Hiding a worry to protect someone can make it heavier to carry. Try: "Money has been hard lately. I don't need you to fix it. I didn't want to keep it from you."</p></div>
-    </div>
-    <div class="card help small">
-      <h3>Is someone controlling your money?</h3>
-      <p>Taking your pay, checking every dollar, keeping you from work or putting debt in your name can be a kind of abuse. It is not your fault.</p>
-      <p style="margin:0">The National Domestic Violence Hotline is free and private: call <strong>1-800-799-7233</strong>, or text <strong>START</strong> to <strong>88788</strong>. Need to leave fast? Tap <strong>Hide all</strong> at the top.</p>
-    </div>
-    <div class="card help small">
-      <h3>If things feel unsafe</h3>
-      <p style="margin:0">In the US, call or text <strong>988</strong> any time.</p>
-    </div>
-    <p class="small soft">These are links and numbers only. Ostrich sends nothing about you.</p>
-    <button class="quiet" id="talkBack">Back</button>
+    <p class="soft">Ostrich is not therapy, and you do not have to do this alone. Free options come first, always.</p>
+    <div class="card"><h3>A nonprofit credit counselor</h3><p class="soft" style="margin:0">Free or low-cost help with debt and a plan, through the National Foundation for Credit Counseling: <a href="https://www.nfcc.org/" style="color:var(--green)">nfcc.org</a></p><span class="tag">Free options first</span></div>
+    <div class="card"><h3>Free tax help, and money you may be owed</h3><p class="soft" style="margin:0">IRS volunteer sites (VITA) prepare taxes for free if you qualify: <a href="https://www.irs.gov/individuals/free-tax-return-preparation-for-qualifying-taxpayers" style="color:var(--green)">irs.gov</a></p></div>
+    <div class="card"><h3>Someone you trust</h3><p class="soft" style="margin:0">A friend or family member. Hiding a worry to protect someone can make it heavier to carry. Try: "Money has been hard lately. I don't need you to fix it. I didn't want to keep it from you."</p></div>
+    <div class="card"><h3>Is someone controlling your money?</h3><p>Taking your pay, checking every dollar, keeping you from work, or putting debt in your name can be a kind of abuse. It is not your fault.</p><p>The National Domestic Violence Hotline is free and private: call 1-800-799-7233, or text START to 88788.</p><p class="soft" style="margin:0">Need to leave fast? Tap Hide all at the top.</p></div>
+    <div class="card"><p class="label">If things feel unsafe</p><p style="margin:0">In the US, call or text 988 any time. These are links and numbers only: Ostrich sends nothing about you.</p></div>
+    <button class="btn outline" id="talkBack" style="margin-top:12px">Back</button>
   </section>
 
-  <!-- Enter numbers -->
-  <section id="v-enter" hidden>
-    <h1>Today's look</h1>
-    <p class="soft">Rough numbers are fine. Leave a box empty if it's zero.</p>
-    <form id="form" novalidate>
-      <label for="cash">Cash<span class="hint">Bank accounts, wallet, mobile money</span></label>
-      <div class="money"><span>$</span><input id="cash" inputmode="decimal" autocomplete="off" placeholder="0"></div>
-
-      <label for="invest">What you've put away<span class="hint">Savings, investments, retirement, crypto</span></label>
-      <div class="money"><span>$</span><input id="invest" inputmode="decimal" autocomplete="off" placeholder="0"></div>
-
-      <label for="owe">What you owe<span class="hint">Cards, loans, money you've borrowed</span></label>
-      <div class="money"><span>$</span><input id="owe" inputmode="decimal" autocomplete="off" placeholder="0"></div>
-
-      <div id="sampleNote" class="sample" hidden>These are made-up numbers, so you can try Ostrich without typing your own.</div>
-      <div class="stack" style="margin-top:22px">
-        <button type="submit">See my number</button>
-        <button type="button" class="link" id="useSample">Try it with made-up numbers</button>
-      </div>
-    </form>
-  </section>
-
-  <!-- Result -->
-  <section id="v-result" hidden>
-    <div class="center">
-      <span class="pill" id="when"></span>
-      <p class="soft" style="margin:18px 0 0">Your net worth today</p>
-      <div class="big" id="nw"></div>
-      <p class="soft small" id="parts"></p>
-      <svg class="ostrich" width="84" height="84" viewBox="0 0 120 120" aria-hidden="true">
-        <ellipse cx="60" cy="90" rx="34" ry="20" fill="var(--egg)"/>
-        <path d="M60 74 C56 52 58 30 64 16" stroke="var(--ink)" stroke-width="6" fill="none" stroke-linecap="round"/>
-        <circle cx="66" cy="13" r="9" fill="var(--ink)"/>
-        <path d="M74 13 L85 15 L74 18 Z" fill="var(--accent)"/>
-        <circle cx="68" cy="11" r="1.8" fill="var(--bg)"/>
-      </svg>
-      <p class="looked">You looked.</p>
-      <p class="soft small" id="feltLine" hidden></p>
-    </div>
-
-    <div class="card">
-      <p id="compare" style="margin:0"></p>
-    </div>
-
-    <div class="card toggle">
-      <span>Hide amounts</span>
-      <input type="checkbox" id="hide" aria-label="Hide amounts">
-    </div>
-
-    <h2>Your looks</h2>
-    <div class="card" id="history"></div>
-
-    <h2>Where your numbers are</h2>
-    <div class="card small">
-      <p>Only on this device, in this browser. Ostrich has no server for them, and nothing was sent anywhere.</p>
-      <p class="soft" style="margin:0">If you clear your browser's data, your looks go with it. Copy them first if you'd like to keep them.</p>
-    </div>
-
-    <div class="linkrow">
-      <button class="link" type="button" id="toSent">What was sent?</button>
-      <button class="link" type="button" id="toTalk">Want to talk to someone?</button>
-    </div>
-
-    <div class="stack" style="margin-top:14px">
-      <button class="quiet" id="again">Change today's numbers</button>
-      <button class="quiet" id="copy">Copy my looks (CSV)</button>
-      <button class="quiet" id="wipe">Delete everything</button>
-    </div>
-    <p class="soft small center" id="copied" aria-live="polite"></p>
-  </section>
-
-  <footer>Ostrich prototype · made with Claude · <span id="storeNote"></span></footer>
 </main>
 
+<!-- Hide all (screen 23) -->
 <div class="cover" id="cover" hidden aria-label="Hidden screen">
-  <p class="soft">Hidden. Nothing is shown.</p>
-  <button class="quiet" id="holdShow">Hold to show</button>
+  <div class="panel">
+    <span class="sleep" id="artSleep"></span>
+    <h3>Hidden</h3>
+    <p style="margin:0">Nothing is shown.</p>
+    <button class="btn" id="holdShow">Hold to show</button>
+  </div>
 </div>
 
 <div class="dialog" id="confirm" hidden role="dialog" aria-modal="true" aria-labelledby="cTitle">
   <div class="card">
-    <h1 id="cTitle" style="font-size:22px">Delete every look?</h1>
+    <h1 id="cTitle" style="font-size:26px">Delete every look?</h1>
     <p>This removes all your numbers from this device. It can't be undone.</p>
-    <div class="stack">
-      <button id="cYes">Delete everything</button>
-      <button class="quiet" id="cNo">Keep my looks</button>
-    </div>
+    <button class="btn" id="cYes">Delete everything</button>
+    <button class="btn outline" id="cNo">Keep my looks</button>
   </div>
 </div>
 
 <script>
 (function(){
   var KEY = 'ostrich.looks.v1';
-  var memory = [];            // used when the browser won't store anything
+  var memory = [];
   var canStore = true;
+  var VIEWS = ['v-welcome','v-feel','v-enter','v-result','v-sent','v-talk'];
+
+  function $(id){ return document.getElementById(id); }
+  var art = $('ostrichArt').innerHTML;
+  $('artLooked').innerHTML = art; $('artSleep').innerHTML = art;
 
   function load(){
     try { var s = localStorage.getItem(KEY); return s ? JSON.parse(s) : []; }
@@ -247,8 +250,7 @@
   }
   function save(list){
     memory = list;
-    try { localStorage.setItem(KEY, JSON.stringify(list)); }
-    catch(e){ canStore = false; }
+    try { localStorage.setItem(KEY, JSON.stringify(list)); } catch(e){ canStore = false; }
   }
   function today(){
     var d = new Date();
@@ -261,18 +263,31 @@
   }
   var hidden = false;
   function money(n){
-    if (hidden) return '$ ••••';
+    if (hidden) return '$••••';
     var s = Math.round(Math.abs(n)).toLocaleString('en-US');
-    return (n < 0 ? '−$' : '$') + s;
+    return (n < 0 ? '-$' : '$') + s;
   }
   function niceDate(iso){
     var p = iso.split('-'); var d = new Date(+p[0], +p[1]-1, +p[2]);
     return d.toLocaleDateString('en-US',{weekday:'short', month:'short', day:'numeric'});
   }
-  function $(id){ return document.getElementById(id); }
+  function currentView(){ var c='v-welcome'; VIEWS.forEach(function(v){ if(!$(v).hidden) c=v; }); return c; }
   function show(id){
-    ['v-welcome','v-feel','v-enter','v-result','v-sent','v-talk'].forEach(function(v){ $(v).hidden = (v !== id); });
+    VIEWS.forEach(function(v){ $(v).hidden = (v !== id); });
+    $('main').className = (id === 'v-sent') ? 'dark' : '';
+    document.body.className = (id === 'v-sent') ? 'darkbody' : '';
+    document.documentElement.style.background = (id === 'v-sent') ? '#14213D' : '';
+    $('hideAmt').hidden = (id !== 'v-result');
+    document.querySelector('meta[name=theme-color]').setAttribute('content', id === 'v-sent' ? '#14213D' : '#F4F1EA');
     window.scrollTo(0,0);
+  }
+  var lastView = 'v-welcome';
+  function go(v){ lastView = currentView(); show(v); }
+
+  function setHidden(h){
+    hidden = h;
+    try { localStorage.setItem('ostrich.hide', h ? '1' : '0'); } catch(e){}
+    $('hideAmt').textContent = h ? 'Show amounts' : 'Hide amounts';
   }
 
   function renderResult(){
@@ -280,33 +295,30 @@
     if (!list.length){ show('v-welcome'); return; }
     var cur = list[list.length-1];
     var nw = cur.cash + cur.invest - cur.owe;
-    $('when').textContent = cur.date === today() ? 'Today' : niceDate(cur.date);
+    $('when').textContent = cur.date === today() ? 'Your number today' + (cur.sample ? ' (made up)' : '') : 'Your number on ' + niceDate(cur.date);
     $('nw').textContent = money(nw);
-    if (cur.feeling){ $('feltLine').hidden = false; $('feltLine').textContent = 'How it felt before you looked: ' + cur.feeling.toLowerCase() + '.'; } else { $('feltLine').hidden = true; }
-    $('parts').textContent = hidden ? '' :
-      money(cur.cash)+' cash + '+money(cur.invest)+' put away − '+money(cur.owe)+' owed';
+    $('parts').textContent = hidden ? '' : money(cur.cash)+' cash + '+money(cur.invest)+' invested - '+money(cur.owe)+' owed';
+    if (cur.feeling){ $('feltLine').hidden = false; $('feltLine').textContent = 'How it felt before you looked: ' + cur.feeling.toLowerCase() + '.'; }
+    else $('feltLine').hidden = true;
 
     var prev = list.length > 1 ? list[list.length-2] : null;
-    if (!prev){
-      $('compare').textContent = "This is your first look. Next time, you'll see how today compares.";
-    } else {
+    if (!prev) $('compare').textContent = "Your first look. Next time, you'll see how it compares.";
+    else {
       var pn = prev.cash + prev.invest - prev.owe, diff = nw - pn;
-      var since = 'since your last look (' + niceDate(prev.date) + ')';
-      if (hidden) $('compare').textContent = 'Amounts are hidden. Your change ' + since + ' is here when you show them.';
-      else if (Math.round(diff) === 0) $('compare').textContent = 'The same as ' + since + '.';
-      else $('compare').textContent = (diff > 0 ? 'Up ' : 'Down ') + money(Math.abs(diff)) + ' ' + since + '.';
+      var since = 'since ' + niceDate(prev.date);
+      if (hidden) $('compare').textContent = 'Your change ' + since + ' is hidden with the amounts.';
+      else if (Math.round(diff) === 0) $('compare').textContent = 'The same as ' + niceDate(prev.date) + '.';
+      else $('compare').textContent = (diff > 0 ? 'Up ' : 'Down ') + money(Math.abs(diff)) + ' ' + since;
     }
 
     var h = $('history'); h.innerHTML = '';
     list.slice().reverse().forEach(function(x){
       var r = document.createElement('div'); r.className = 'row';
-      var a = document.createElement('span'); a.textContent = x.date === today() ? 'Today' : niceDate(x.date);
+      var a = document.createElement('span'); a.textContent = (x.date === today() ? 'Today' : niceDate(x.date)) + (x.sample ? ' (made up)' : '');
       var b = document.createElement('span'); b.textContent = money(x.cash + x.invest - x.owe);
-      if (x.sample){ a.textContent += ' (made up)'; }
       r.appendChild(a); r.appendChild(b); h.appendChild(r);
     });
     $('again').textContent = cur.date === today() ? "Change today's numbers" : "Take today's look";
-    $('storeNote').textContent = canStore ? 'saved on this device' : "this browser won't save, so your looks last until you close the page";
     show('v-result');
   }
 
@@ -316,62 +328,43 @@
     $('owe').value = x ? (x.owe || '') : '';
   }
 
-  var usingSample = false;
-  var feeling = null, lastView = 'v-welcome';
-  function go(v){ lastView = currentView(); show(v); }
-  function currentView(){ var c='v-welcome'; ['v-welcome','v-feel','v-enter','v-result','v-sent','v-talk'].forEach(function(v){ if(!$(v).hidden) c=v; }); return c; }
+  var usingSample = false, feeling = null;
   function startLook(){
     feeling = null;
     Array.prototype.forEach.call(document.querySelectorAll('#feelChoices button'), function(b){ b.setAttribute('aria-pressed','false'); });
-    $('gentle').hidden = true; show('v-feel');
+    $('gentle').hidden = true; $('feelNext').textContent = 'Next';
+    show('v-feel');
   }
   $('start').onclick = startLook;
+  var demo = false;
+  $('startDemo').onclick = function(){ demo = true; startLook(); };
   Array.prototype.forEach.call(document.querySelectorAll('#feelChoices button'), function(b){
     b.setAttribute('aria-pressed','false');
     b.onclick = function(){
       feeling = b.getAttribute('data-feel');
       Array.prototype.forEach.call(document.querySelectorAll('#feelChoices button'), function(x){ x.setAttribute('aria-pressed', x===b ? 'true' : 'false'); });
-      $('gentle').hidden = !(feeling === 'Very tense' || feeling === 'Too much');
+      var gentle = (feeling === 'Very tense' || feeling === 'Too much');
+      $('gentle').hidden = !gentle;
+      $('feelNext').textContent = gentle ? 'Start gently' : 'Next';
     };
   });
   function toEnter(){
-    if (feeling === 'Very tense' || feeling === 'Too much'){
-      hidden = true; $('hide').checked = true;
-      try { localStorage.setItem('ostrich.hide','1'); } catch(e){}
-    }
+    if (feeling === 'Very tense' || feeling === 'Too much') setHidden(true);
     var list = load(), cur = list[list.length-1];
     fillForm(cur ? {cash:cur.cash, invest:cur.invest, owe:cur.owe} : null);
     usingSample = !!(cur && cur.sample); $('sampleNote').hidden = !usingSample;
-    show('v-enter'); $('cash').focus();
+    show('v-enter');
+    if (demo){ demo = false; $('useSample').click(); }
   }
   $('feelNext').onclick = toEnter;
   $('feelSkip').onclick = function(){ feeling = null; toEnter(); };
   $('feelTalk').onclick = function(){ go('v-talk'); };
   $('toTalk').onclick = function(){ go('v-talk'); };
   $('talkBack').onclick = function(){ show(lastView); };
-  $('toSent').onclick = function(){
-    var list = load(), cur = list[list.length-1], prev = list.length>1 ? list[list.length-2] : null;
-    var nw = cur.cash + cur.invest - cur.owe;
-    var obj = { netWorth: Math.round(nw), changeSinceLastLook: prev ? Math.round(nw - (prev.cash+prev.invest-prev.owe)) : null,
-      cash: Math.round(cur.cash), putAway: Math.round(cur.invest), owed: Math.round(cur.owe) };
-    $('sentJson').textContent = JSON.stringify(obj, null, 2);
-    go('v-sent');
-  };
-  $('sentBack').onclick = function(){ show('v-result'); };
 
-  // Hide all: cover everything; hold the button to bring it back
-  $('hideAll').onclick = function(){ $('cover').hidden = false; };
-  (function(){
-    var t = null, btn = $('holdShow');
-    function down(e){ e.preventDefault(); btn.textContent = 'Keep holding'; t = setTimeout(function(){ $('cover').hidden = true; btn.textContent = 'Hold to show'; }, 800); }
-    function up(){ clearTimeout(t); btn.textContent = 'Hold to show'; }
-    btn.addEventListener('pointerdown', down); btn.addEventListener('pointerup', up);
-    btn.addEventListener('pointerleave', up); btn.addEventListener('pointercancel', up);
-    btn.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') { $('cover').hidden = true; } });
-  })();
   $('useSample').onclick = function(){
     usingSample = true;
-    fillForm({cash: 640, invest: 1200, owe: 3850});
+    fillForm({cash: 730, invest: 60, owe: 16330});
     $('sampleNote').hidden = false;
   };
   ['cash','invest','owe'].forEach(function(id){
@@ -393,19 +386,25 @@
   $('again').onclick = function(){
     var list = load(); var cur = list[list.length-1];
     if (!cur || cur.date !== today()) { startLook(); return; }
-    fillForm(cur && cur.date === today() ? cur : (cur ? {cash:cur.cash, invest:cur.invest, owe:cur.owe} : null));
-    usingSample = !!(cur && cur.sample); $('sampleNote').hidden = !usingSample;
+    feeling = cur.feeling || null;
+    fillForm(cur); usingSample = !!cur.sample; $('sampleNote').hidden = !usingSample;
     show('v-enter');
   };
 
-  $('hide').onchange = function(){
-    hidden = this.checked;
-    try { localStorage.setItem('ostrich.hide', hidden ? '1' : '0'); } catch(e){}
-    renderResult();
+  $('hideAmt').onclick = function(){ setHidden(!hidden); renderResult(); };
+
+  $('toSent').onclick = function(){
+    var list = load(), cur = list[list.length-1], prev = list.length>1 ? list[list.length-2] : null;
+    var nw = cur.cash + cur.invest - cur.owe;
+    var obj = { netWorth: Math.round(nw), changeSinceLastLook: prev ? Math.round(nw - (prev.cash+prev.invest-prev.owe)) : null,
+      totalCash: Math.round(cur.cash), totalInvested: Math.round(cur.invest), totalOwed: Math.round(cur.owe) };
+    $('sentJson').textContent = JSON.stringify(obj, null, 2);
+    go('v-sent');
   };
+  $('sentBack').onclick = function(){ show('v-result'); };
 
   $('copy').onclick = function(){
-    var rows = [['date','cash','put_away','owed','net_worth','made_up','feeling']];
+    var rows = [['date','cash','invested','owed','net_worth','made_up','feeling']];
     load().forEach(function(x){ rows.push([x.date, x.cash, x.invest, x.owe, x.cash + x.invest - x.owe, x.sample ? 'yes' : 'no', x.feeling || '']); });
     var csv = rows.map(function(r){ return r.join(','); }).join('\n');
     var done = function(ok){ $('copied').textContent = ok ? 'Copied. Paste it into a note or a spreadsheet.' : "Couldn't copy here. Your looks are still saved on this device."; };
@@ -422,9 +421,20 @@
     show('v-welcome');
   };
 
+  // Hide all: cover everything; press and hold to bring it back
+  $('hideAll').onclick = function(){ $('cover').hidden = false; };
+  (function(){
+    var t = null, btn = $('holdShow');
+    function down(e){ e.preventDefault(); btn.textContent = 'Keep holding'; t = setTimeout(function(){ $('cover').hidden = true; btn.textContent = 'Hold to show'; }, 800); }
+    function up(){ clearTimeout(t); btn.textContent = 'Hold to show'; }
+    btn.addEventListener('pointerdown', down); btn.addEventListener('pointerup', up);
+    btn.addEventListener('pointerleave', up); btn.addEventListener('pointercancel', up);
+    btn.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') $('cover').hidden = true; });
+  })();
+
   try { hidden = localStorage.getItem('ostrich.hide') === '1'; } catch(e){}
-  load(); $('storeNote').textContent = canStore ? 'saved on this device' : "this browser won't save, so your looks last until you close the page";
-  $('hide').checked = hidden;
+  setHidden(hidden);
+  load();
   if (load().length) renderResult(); else show('v-welcome');
 })();
 </script>

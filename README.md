@@ -34,7 +34,7 @@ Built for the NEAR Private AI Hackathon, New York, November 2026.
 
 ## How it's made
 
-One HTML file with plain CSS and JavaScript. No build step, no dependencies, no tracking.
+One HTML file with plain CSS and JavaScript, plus the Newsreader and Inter fonts in `fonts/` (SIL Open Font License), shipped with the app so opening it sends no request anywhere. No build step, no dependencies, no tracking. The look follows the Ostrich screen designs.
 
 ## Licence
 
