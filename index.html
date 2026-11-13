@@ -63,6 +63,10 @@
   .row:first-child{border-top:0;padding-top:2px}
   .row:last-child{padding-bottom:2px}
   .section{font-weight:600;margin:20px 0 6px}
+  .chart{position:relative;margin-top:0}
+  .chart svg{display:block;width:100%;height:auto;touch-action:pan-y}
+  .chart .tip{position:absolute;top:6px;pointer-events:none;background:var(--ink);color:var(--bg);font-size:13px;font-weight:600;padding:4px 8px;border-radius:8px;white-space:nowrap;transform:translateX(-50%)}
+  .trend{font-size:15px;margin:8px 0 0}
   .sample{background:var(--sand);border-radius:14px;padding:10px 14px;font-size:14px;margin-top:14px}
   [hidden]{display:none!important}
   body.darkbody{background:var(--ink)}
@@ -167,6 +171,11 @@
     <p class="change" id="compare"></p>
     <p class="soft small" id="parts" style="margin:0"></p>
     <p class="soft small" id="feltLine" hidden style="margin-top:6px"></p>
+
+    <div id="trendWrap" hidden>
+      <p class="section" id="trendTitle">Your number over time</p>
+      <div class="card chart" id="chart" style="margin-top:0"></div>
+    </div>
 
     <p class="section">Your looks</p>
     <div class="card" id="history" style="margin-top:0"></div>
@@ -312,14 +321,86 @@
     }
 
     var h = $('history'); h.innerHTML = '';
-    list.slice().reverse().forEach(function(x){
+    var recent = list.slice(-7).reverse();
+    recent.forEach(function(x){
       var r = document.createElement('div'); r.className = 'row';
       var a = document.createElement('span'); a.textContent = (x.date === today() ? 'Today' : niceDate(x.date)) + (x.sample ? ' (made up)' : '');
       var b = document.createElement('span'); b.textContent = money(x.cash + x.invest - x.owe);
       r.appendChild(a); r.appendChild(b); h.appendChild(r);
     });
+    if (list.length > 7){ var more = document.createElement('p'); more.className = 'soft small'; more.style.margin = '8px 0 0'; more.textContent = 'And ' + (list.length - 7) + ' earlier looks, in the line above.'; h.appendChild(more); }
+    drawChart(list);
     $('again').textContent = cur.date === today() ? "Change today's numbers" : "Take today's look";
     show('v-result');
+  }
+
+  // One line, your number over time. Navy on cream; no red or green.
+  function drawChart(list){
+    var wrap = $('trendWrap'), box = $('chart');
+    if (list.length < 3){ wrap.hidden = true; return; }
+    wrap.hidden = false; box.innerHTML = '';
+    var W = 340, H = 160, L = 8, R = 8, T = 14, B = 26;
+    var vals = list.map(function(x){ return x.cash + x.invest - x.owe; });
+    var t0 = Date.parse(list[0].date), t1 = Date.parse(list[list.length-1].date) || t0 + 1;
+    if (t1 === t0) t1 = t0 + 86400000;
+    var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
+    var pad = Math.max((hi - lo) * 0.15, 50); lo -= pad; hi += pad;
+    function X(i){ return L + (Date.parse(list[i].date) - t0) / (t1 - t0) * (W - L - R); }
+    function Y(v){ return T + (hi - v) / (hi - lo) * (H - T - B); }
+    var ns = 'http://www.w3.org/2000/svg';
+    var svg = document.createElementNS(ns, 'svg'); svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    svg.setAttribute('role', 'img');
+    var first = vals[0], last = vals[vals.length-1];
+    svg.setAttribute('aria-label', hidden ? 'Your number over time, amounts hidden' : 'Your number from ' + money(first) + ' on ' + niceDate(list[0].date) + ' to ' + money(last) + ' today');
+    function el(n, a){ var e = document.createElementNS(ns, n); for (var k in a) e.setAttribute(k, a[k]); svg.appendChild(e); return e; }
+    if (lo < 0 && hi > 0){
+      el('line', {x1:L, x2:W-R, y1:Y(0), y2:Y(0), stroke:'#DDD8CB', 'stroke-width':1, 'stroke-dasharray':'4 4'});
+      if (!hidden){ var z = el('text', {x:W-R, y:Y(0)-4, 'text-anchor':'end', 'font-size':11, fill:'#4A5568'}); z.textContent = '$0'; }
+    }
+    var d = vals.map(function(v,i){ return (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(v).toFixed(1); }).join(' ');
+    el('path', {d: d + ' L' + X(vals.length-1).toFixed(1) + ' ' + (H-B) + ' L' + X(0).toFixed(1) + ' ' + (H-B) + ' Z', fill:'#F2D7A1', 'fill-opacity':0.45});
+    el('path', {d: d, fill:'none', stroke:'#14213D', 'stroke-width':2, 'stroke-linejoin':'round', 'stroke-linecap':'round'});
+    el('circle', {cx:X(vals.length-1), cy:Y(last), r:4.5, fill:'#14213D', stroke:'#FBFAF6', 'stroke-width':2});
+    var a = el('text', {x:L, y:H-8, 'font-size':11, fill:'#4A5568'}); a.textContent = niceDate(list[0].date).replace(/^\w+, /,'');
+    var b = el('text', {x:W-R, y:H-8, 'font-size':11, fill:'#4A5568', 'text-anchor':'end'}); b.textContent = 'Today';
+    var cross = el('line', {y1:T, y2:H-B, stroke:'#4A5568', 'stroke-width':1, visibility:'hidden'});
+    var dot = el('circle', {r:5, fill:'#FBFAF6', stroke:'#14213D', 'stroke-width':2, visibility:'hidden'});
+    var hit = el('rect', {x:0, y:0, width:W, height:H, fill:'transparent'});
+    box.appendChild(svg);
+    var tip = document.createElement('div'); tip.className = 'tip'; tip.hidden = true; box.appendChild(tip);
+    function at(evt){
+      var r = svg.getBoundingClientRect(), x = (evt.clientX - r.left) / r.width * W, best = 0, bd = 1e9;
+      for (var i = 0; i < vals.length; i++){ var dd = Math.abs(X(i) - x); if (dd < bd){ bd = dd; best = i; } }
+      cross.setAttribute('x1', X(best)); cross.setAttribute('x2', X(best)); cross.setAttribute('visibility', 'visible');
+      dot.setAttribute('cx', X(best)); dot.setAttribute('cy', Y(vals[best])); dot.setAttribute('visibility', 'visible');
+      tip.hidden = false; tip.textContent = niceDate(list[best].date) + (hidden ? '' : ' · ' + money(vals[best]));
+      var px = X(best) / W * box.clientWidth; tip.style.left = Math.min(Math.max(px, 70), box.clientWidth - 70) + 'px';
+    }
+    function off(){ cross.setAttribute('visibility','hidden'); dot.setAttribute('visibility','hidden'); tip.hidden = true; }
+    hit.addEventListener('pointermove', at); hit.addEventListener('pointerdown', at);
+    hit.addEventListener('pointerleave', off); hit.addEventListener('pointercancel', off);
+    var since = last - first;
+    $('trendTitle').textContent = 'Your number since ' + niceDate(list[0].date).replace(/^\w+, /,'') + (list[0].sample ? ' (made up)' : '');
+    var tr = $('trendLine') || (function(){ var p = document.createElement('p'); p.id = 'trendLine'; p.className = 'trend'; wrap.appendChild(p); return p; })();
+    tr.textContent = hidden ? 'Amounts are hidden.' : (Math.round(since) === 0 ? 'The same as when you started.' : (since > 0 ? 'Up ' : 'Down ') + money(Math.abs(since)) + ' since you started.');
+  }
+
+  // The demo: six months of looks by a made-up member, so you can see a line.
+  function iso(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+  function seedDemo(){
+    if (load().some(function(x){ return !x.sample; })) return; // never mix with your own looks
+    var out = [], n = 182, seed = 7;
+    function rnd(){ seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+    var start = -17800, end = -15540;
+    for (var k = n; k >= 1; k--){
+      if (rnd() < 0.3) continue;                       // some days she didn't look, and that's fine
+      var t = (n - k) / n, d = new Date(); d.setDate(d.getDate() - k);
+      var v = start + (end - start) * t + 260 * Math.sin(t * 11) + (rnd() - 0.5) * 220;
+      if (t > 0.42 && t < 0.55) v -= 900 * Math.sin((t - 0.42) / 0.13 * Math.PI); // a car repair, then back
+      v = Math.round(v / 10) * 10;
+      out.push({ date: iso(d), cash: 730, invest: 60, owe: 790 - v, sample: true });
+    }
+    save(out);
   }
 
   function fillForm(x){
@@ -376,7 +457,8 @@
     var entry = { date: today(), cash: num($('cash').value), invest: num($('invest').value), owe: num($('owe').value) };
     if (usingSample) entry.sample = true;
     if (feeling) entry.feeling = feeling;
-    var list = load().filter(function(x){ return x.date !== entry.date; });
+    if (usingSample) seedDemo();
+    var list = load().filter(function(x){ return x.date !== entry.date && (usingSample || !x.sample); });
     list.push(entry);
     list.sort(function(a,b){ return a.date < b.date ? -1 : 1; });
     save(list);
