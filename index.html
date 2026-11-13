@@ -28,7 +28,7 @@
   .small{font-size:14px}
   .center{text-align:center}
   .topbar{display:flex;justify-content:space-between;align-items:center;min-height:48px;margin-bottom:10px;gap:8px}
-  .brand{font-family:var(--serif);font-size:24px}
+  .brand{font-family:var(--serif);font-size:24px;background:none;border:0;padding:6px 0;color:inherit;cursor:pointer;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none}
   .pills{display:flex;gap:8px;align-items:center}
   .pill{min-height:40px;display:inline-flex;align-items:center;padding:0 14px;border-radius:999px;font:600 14px var(--sans);cursor:pointer}
   .pill.sage{background:var(--sage);color:var(--green-ink);border:0}
@@ -92,7 +92,7 @@
 <main id="main">
 
   <div class="topbar" id="topbar">
-    <span class="brand">Ostrich</span>
+    <button class="brand" id="home" aria-label="Ostrich: back to the first screen. Press and hold to hide all.">Ostrich</button>
     <div class="pills">
       <button class="pill plain" id="hideAmt" hidden>Hide amounts</button>
       <button class="pill sage" id="hideAll" aria-label="Hide all: cover the screen">Hide all</button>
@@ -107,7 +107,7 @@
     <div class="card rel"><span class="icon" aria-hidden="true">💭</span><div><h3>The feeling</h3><p class="soft" style="margin:0">What it is like to look at that number today.</p></div></div>
     <p>Ostrich keeps both, privately on your device. It has no account and no server for your numbers, and nothing you type is sent anywhere.</p>
     <button class="btn" id="start" style="margin-top:22px">Next</button>
-    <div class="lnks"><button class="lnk" id="startDemo">Try the demo</button></div>
+    <div class="lnks"><button class="lnk" id="startDemo">Try the demo</button><button class="lnk" id="backToLook" hidden>Back to your number</button></div>
     <p class="fine">Not therapy or financial advice. Ostrich never takes a cut of your money.</p>
   </section>
 
@@ -420,6 +420,20 @@
     $('confirm').hidden = true; $('copied').textContent = '';
     show('v-welcome');
   };
+
+  // Tap Ostrich to go back to the first screen; press and hold it to hide all
+  (function(){
+    var t = null, held = false, logo = $('home');
+    logo.addEventListener('pointerdown', function(){ held = false; t = setTimeout(function(){ held = true; $('cover').hidden = false; }, 600); });
+    ['pointerup','pointerleave','pointercancel'].forEach(function(ev){ logo.addEventListener(ev, function(){ clearTimeout(t); }); });
+    logo.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+    logo.addEventListener('click', function(){
+      if (held) { held = false; return; }
+      $('backToLook').hidden = !load().length;
+      show('v-welcome');
+    });
+  })();
+  $('backToLook').onclick = function(){ renderResult(); };
 
   // Hide all: cover everything; press and hold to bring it back
   $('hideAll').onclick = function(){ $('cover').hidden = false; };
