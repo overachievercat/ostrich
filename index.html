@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ostrich: your daily look</title>
+<meta name="description" content="A private daily look at your money. Every number is welcome. Your numbers stay on your device.">
+<style>
+  :root{
+    --bg:#FBF7F0; --card:#FFFFFF; --ink:#2B2622; --soft:#6E655D; --line:#E8E0D4;
+    --accent:#4A5A7A; --accent-ink:#FFFFFF; --tint:#EEF0F5; --egg:#F3E9D8;
+    --r:18px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#1C1A18; --card:#262320; --ink:#F4EFE8; --soft:#B5ACA2; --line:#3A3530;
+      --accent:#A9B8D8; --accent-ink:#1C1A18; --tint:#2C2F38; --egg:#332C22; }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);
+    font:17px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  main{max-width:440px;margin:0 auto;padding:28px 20px 48px}
+  h1{font-size:28px;line-height:1.2;margin:8px 0 6px;font-weight:700;letter-spacing:-.01em}
+  h2{font-size:15px;font-weight:600;color:var(--soft);margin:28px 0 8px;text-transform:none}
+  p{margin:0 0 12px}
+  .soft{color:var(--soft)}
+  .small{font-size:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:14px 0}
+  button,.btn{font:inherit;font-weight:600;border:0;border-radius:14px;padding:14px 18px;width:100%;
+    background:var(--accent);color:var(--accent-ink);cursor:pointer;min-height:52px}
+  button.quiet{background:transparent;color:var(--accent);border:1px solid var(--line);font-weight:500}
+  button.link{background:none;color:var(--accent);padding:8px 0;min-height:0;width:auto;font-weight:500;text-decoration:underline}
+  button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  label{display:block;font-weight:600;margin:16px 0 4px}
+  .hint{display:block;font-weight:400;font-size:14px;color:var(--soft)}
+  .money{display:flex;align-items:center;border:1px solid var(--line);border-radius:12px;background:var(--card);padding:0 14px}
+  .money span{color:var(--soft);font-size:18px}
+  .money input{border:0;background:transparent;color:var(--ink);font:inherit;font-size:20px;padding:12px 8px;width:100%;outline:none}
+  .big{font-size:44px;font-weight:700;letter-spacing:-.02em;margin:6px 0 2px;font-variant-numeric:tabular-nums;word-break:break-all}
+  .looked{font-size:22px;font-weight:600;margin:10px 0 0}
+  .row{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}
+  .row:first-child{border-top:0}
+  .stack>*+*{margin-top:10px}
+  .ostrich{display:block;margin:0 auto}
+  .center{text-align:center}
+  .pill{display:inline-block;background:var(--tint);color:var(--ink);border-radius:999px;padding:4px 12px;font-size:14px}
+  .sample{background:var(--egg);border-radius:12px;padding:10px 12px;font-size:14px;margin-top:12px}
+  .toggle{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .toggle input{width:22px;height:22px;accent-color:var(--accent)}
+  [hidden]{display:none!important}
+  .dialog{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center;padding:16px}
+  .dialog .card{width:100%;max-width:440px}
+  footer{margin-top:36px;font-size:13px;color:var(--soft);text-align:center}
+</style>
+</head>
+<body>
+<main>
+
+  <!-- Welcome -->
+  <section id="v-welcome" hidden>
+    <svg class="ostrich" width="120" height="120" viewBox="0 0 120 120" aria-hidden="true">
+      <ellipse cx="60" cy="86" rx="34" ry="22" fill="var(--egg)"/>
+      <path d="M60 70 C58 48 62 34 70 26" stroke="var(--ink)" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <circle cx="73" cy="23" r="9" fill="var(--ink)"/>
+      <path d="M81 23 L92 26 L81 28 Z" fill="var(--accent)"/>
+      <circle cx="75" cy="21" r="1.8" fill="var(--bg)"/>
+    </svg>
+    <h1 class="center">Ostrich</h1>
+    <p class="center">A private daily look at your money.<br>Every number is welcome.</p>
+    <div class="card small">
+      <p><strong>Your numbers stay on this device.</strong> Ostrich has no account and no server for them. Nothing you type here is sent anywhere.</p>
+      <p class="soft" style="margin:0">Ostrich won't tell you what's right or wrong to do with your money. It shows you where you are.</p>
+    </div>
+    <button id="start">Take a look</button>
+  </section>
+
+  <!-- Enter numbers -->
+  <section id="v-enter" hidden>
+    <h1>Today's look</h1>
+    <p class="soft">Rough numbers are fine. Leave a box empty if it's zero.</p>
+    <form id="form" novalidate>
+      <label for="cash">Cash<span class="hint">Bank accounts, wallet, mobile money</span></label>
+      <div class="money"><span>$</span><input id="cash" inputmode="decimal" autocomplete="off" placeholder="0"></div>
+
+      <label for="invest">What you've put away<span class="hint">Savings, investments, retirement, crypto</span></label>
+      <div class="money"><span>$</span><input id="invest" inputmode="decimal" autocomplete="off" placeholder="0"></div>
+
+      <label for="owe">What you owe<span class="hint">Cards, loans, money you've borrowed</span></label>
+      <div class="money"><span>$</span><input id="owe" inputmode="decimal" autocomplete="off" placeholder="0"></div>
+
+      <div id="sampleNote" class="sample" hidden>These are made-up numbers, so you can try Ostrich without typing your own.</div>
+      <div class="stack" style="margin-top:22px">
+        <button type="submit">See my number</button>
+        <button type="button" class="link" id="useSample">Try it with made-up numbers</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Result -->
+  <section id="v-result" hidden>
+    <div class="center">
+      <span class="pill" id="when"></span>
+      <p class="soft" style="margin:18px 0 0">Your net worth today</p>
+      <div class="big" id="nw"></div>
+      <p class="soft small" id="parts"></p>
+      <svg class="ostrich" width="84" height="84" viewBox="0 0 120 120" aria-hidden="true">
+        <ellipse cx="60" cy="90" rx="34" ry="20" fill="var(--egg)"/>
+        <path d="M60 74 C56 52 58 30 64 16" stroke="var(--ink)" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <circle cx="66" cy="13" r="9" fill="var(--ink)"/>
+        <path d="M74 13 L85 15 L74 18 Z" fill="var(--accent)"/>
+        <circle cx="68" cy="11" r="1.8" fill="var(--bg)"/>
+      </svg>
+      <p class="looked">You looked.</p>
+    </div>
+
+    <div class="card">
+      <p id="compare" style="margin:0"></p>
+    </div>
+
+    <div class="card toggle">
+      <span>Hide amounts</span>
+      <input type="checkbox" id="hide" aria-label="Hide amounts">
+    </div>
+
+    <h2>Your looks</h2>
+    <div class="card" id="history"></div>
+
+    <h2>Where your numbers are</h2>
+    <div class="card small">
+      <p>Only on this device, in this browser. Ostrich has no server for them, and nothing was sent anywhere.</p>
+      <p class="soft" style="margin:0">If you clear your browser's data, your looks go with it. Copy them first if you'd like to keep them.</p>
+    </div>
+
+    <div class="stack">
+      <button class="quiet" id="again">Change today's numbers</button>
+      <button class="quiet" id="copy">Copy my looks (CSV)</button>
+      <button class="quiet" id="wipe">Delete everything</button>
+    </div>
+    <p class="soft small center" id="copied" aria-live="polite"></p>
+  </section>
+
+  <footer>Ostrich prototype · made with Claude · <span id="storeNote"></span></footer>
+</main>
+
+<div class="dialog" id="confirm" hidden role="dialog" aria-modal="true" aria-labelledby="cTitle">
+  <div class="card">
+    <h1 id="cTitle" style="font-size:22px">Delete every look?</h1>
+    <p>This removes all your numbers from this device. It can't be undone.</p>
+    <div class="stack">
+      <button id="cYes">Delete everything</button>
+      <button class="quiet" id="cNo">Keep my looks</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var KEY = 'ostrich.looks.v1';
+  var memory = [];            // used when the browser won't store anything
+  var canStore = true;
+
+  function load(){
+    try { var s = localStorage.getItem(KEY); return s ? JSON.parse(s) : []; }
+    catch(e){ canStore = false; return memory; }
+  }
+  function save(list){
+    memory = list;
+    try { localStorage.setItem(KEY, JSON.stringify(list)); }
+    catch(e){ canStore = false; }
+  }
+  function today(){
+    var d = new Date();
+    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  }
+  function num(v){
+    v = String(v||'').replace(/[^0-9.\-]/g,'');
+    var n = parseFloat(v);
+    return isFinite(n) ? Math.abs(n) : 0;
+  }
+  var hidden = false;
+  function money(n){
+    if (hidden) return '$ ••••';
+    var s = Math.round(Math.abs(n)).toLocaleString('en-US');
+    return (n < 0 ? '−$' : '$') + s;
+  }
+  function niceDate(iso){
+    var p = iso.split('-'); var d = new Date(+p[0], +p[1]-1, +p[2]);
+    return d.toLocaleDateString('en-US',{weekday:'short', month:'short', day:'numeric'});
+  }
+  function $(id){ return document.getElementById(id); }
+  function show(id){
+    ['v-welcome','v-enter','v-result'].forEach(function(v){ $(v).hidden = (v !== id); });
+    window.scrollTo(0,0);
+  }
+
+  function renderResult(){
+    var list = load();
+    if (!list.length){ show('v-welcome'); return; }
+    var cur = list[list.length-1];
+    var nw = cur.cash + cur.invest - cur.owe;
+    $('when').textContent = cur.date === today() ? 'Today' : niceDate(cur.date);
+    $('nw').textContent = money(nw);
+    $('parts').textContent = hidden ? '' :
+      money(cur.cash)+' cash + '+money(cur.invest)+' put away − '+money(cur.owe)+' owed';
+
+    var prev = list.length > 1 ? list[list.length-2] : null;
+    if (!prev){
+      $('compare').textContent = "This is your first look. Next time, you'll see how today compares.";
+    } else {
+      var pn = prev.cash + prev.invest - prev.owe, diff = nw - pn;
+      var since = 'since your last look (' + niceDate(prev.date) + ')';
+      if (hidden) $('compare').textContent = 'Amounts are hidden. Your change ' + since + ' is here when you show them.';
+      else if (Math.round(diff) === 0) $('compare').textContent = 'The same as ' + since + '.';
+      else $('compare').textContent = (diff > 0 ? 'Up ' : 'Down ') + money(Math.abs(diff)) + ' ' + since + '.';
+    }
+
+    var h = $('history'); h.innerHTML = '';
+    list.slice().reverse().forEach(function(x){
+      var r = document.createElement('div'); r.className = 'row';
+      var a = document.createElement('span'); a.textContent = x.date === today() ? 'Today' : niceDate(x.date);
+      var b = document.createElement('span'); b.textContent = money(x.cash + x.invest - x.owe);
+      if (x.sample){ a.textContent += ' (made up)'; }
+      r.appendChild(a); r.appendChild(b); h.appendChild(r);
+    });
+    $('storeNote').textContent = canStore ? 'saved on this device' : "this browser won't save, so your looks last until you close the page";
+    show('v-result');
+  }
+
+  function fillForm(x){
+    $('cash').value = x ? (x.cash || '') : '';
+    $('invest').value = x ? (x.invest || '') : '';
+    $('owe').value = x ? (x.owe || '') : '';
+  }
+
+  var usingSample = false;
+  $('start').onclick = function(){ fillForm(null); show('v-enter'); $('cash').focus(); };
+  $('useSample').onclick = function(){
+    usingSample = true;
+    fillForm({cash: 640, invest: 1200, owe: 3850});
+    $('sampleNote').hidden = false;
+  };
+  ['cash','invest','owe'].forEach(function(id){
+    $(id).addEventListener('input', function(){ usingSample = false; $('sampleNote').hidden = true; });
+  });
+
+  $('form').onsubmit = function(e){
+    e.preventDefault();
+    var entry = { date: today(), cash: num($('cash').value), invest: num($('invest').value), owe: num($('owe').value) };
+    if (usingSample) entry.sample = true;
+    var list = load().filter(function(x){ return x.date !== entry.date; });
+    list.push(entry);
+    list.sort(function(a,b){ return a.date < b.date ? -1 : 1; });
+    save(list);
+    renderResult();
+  };
+
+  $('again').onclick = function(){
+    var list = load(); var cur = list[list.length-1];
+    fillForm(cur && cur.date === today() ? cur : (cur ? {cash:cur.cash, invest:cur.invest, owe:cur.owe} : null));
+    usingSample = !!(cur && cur.sample); $('sampleNote').hidden = !usingSample;
+    show('v-enter');
+  };
+
+  $('hide').onchange = function(){
+    hidden = this.checked;
+    try { localStorage.setItem('ostrich.hide', hidden ? '1' : '0'); } catch(e){}
+    renderResult();
+  };
+
+  $('copy').onclick = function(){
+    var rows = [['date','cash','put_away','owed','net_worth','made_up']];
+    load().forEach(function(x){ rows.push([x.date, x.cash, x.invest, x.owe, x.cash + x.invest - x.owe, x.sample ? 'yes' : 'no']); });
+    var csv = rows.map(function(r){ return r.join(','); }).join('\n');
+    var done = function(ok){ $('copied').textContent = ok ? 'Copied. Paste it into a note or a spreadsheet.' : "Couldn't copy here. Your looks are still saved on this device."; };
+    try { navigator.clipboard.writeText(csv).then(function(){ done(true); }, function(){ done(false); }); }
+    catch(e){ done(false); }
+  };
+
+  $('wipe').onclick = function(){ $('confirm').hidden = false; $('cNo').focus(); };
+  $('cNo').onclick = function(){ $('confirm').hidden = true; };
+  $('cYes').onclick = function(){
+    save([]);
+    try { localStorage.removeItem(KEY); } catch(e){}
+    $('confirm').hidden = true; $('copied').textContent = '';
+    show('v-welcome');
+  };
+
+  try { hidden = localStorage.getItem('ostrich.hide') === '1'; } catch(e){}
+  load(); $('storeNote').textContent = canStore ? 'saved on this device' : "this browser won't save, so your looks last until you close the page";
+  $('hide').checked = hidden;
+  if (load().length) renderResult(); else show('v-welcome');
+})();
+</script>
+</body>
+</html>
