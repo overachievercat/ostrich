@@ -6,7 +6,7 @@ Many people avoid looking at their money when the news might be bad (the "ostric
 
 Built for the NEAR Private AI Hackathon, New York, November 2026.
 
-**Try it:** open `index.html` in any browser, or visit the GitHub Pages link in this repo's About section.
+**Try it:** [overachievercat.github.io/ostrich](https://overachievercat.github.io/ostrich/), on any phone or computer. Tap "Try it with made-up numbers" if you'd rather not type your own.
 
 ## In prototype (works today, in this repo)
 
