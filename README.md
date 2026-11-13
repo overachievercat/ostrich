@@ -18,6 +18,10 @@ Built for the NEAR Private AI Hackathon, New York, November 2026.
 - **Stays on your device.** Looks are saved in your browser's local storage. There is no account, no server and no network request in the code.
 - **Copy my looks (CSV).** Your data, yours to take.
 - **Delete everything.** One button, with a confirm step.
+- **How does it feel to look?** One question before the numbers: calm to too much. It only sets your pace: "very tense" or "too much" starts with amounts hidden and offers someone to talk to. Not a score; it stays on your device.
+- **Hide all.** One tap at the top covers the whole screen, for a shared phone or someone looking over your shoulder. Press and hold to bring it back.
+- **What was sent?** Shows that nothing left your device, and exactly which totals the private AI reading would see once it exists.
+- **Want to talk to someone?** Free help first: nonprofit credit counselling, free tax help, someone you trust, the National Domestic Violence Hotline and 988. Links and numbers only; Ostrich sends nothing about you.
 - **Made-up numbers.** Try it without typing your own; those looks are labelled "made up".
 
 ## Roadmap (designed, not built)

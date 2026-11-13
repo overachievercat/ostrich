@@ -49,11 +49,24 @@
   [hidden]{display:none!important}
   .dialog{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center;padding:16px}
   .dialog .card{width:100%;max-width:440px}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin:-8px 0 12px}
+  .topbar .brand{font-weight:700;font-size:16px}
+  .topbar button{width:auto;min-height:40px;padding:8px 14px;font-size:15px}
+  .choices{display:grid;gap:10px;margin:18px 0}
+  .choices button{background:var(--card);color:var(--ink);border:1px solid var(--line);font-weight:500;text-align:left}
+  .choices button[aria-pressed="true"]{border:2px solid var(--accent);background:var(--tint)}
+  .cover{position:fixed;inset:0;background:var(--bg);z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center;user-select:none;-webkit-user-select:none}
+  .cover button{max-width:260px}
+  pre{background:var(--tint);border-radius:12px;padding:12px;font-size:13px;overflow:auto;white-space:pre-wrap;word-break:break-word;margin:10px 0}
+  .help h3{font-size:17px;margin:0 0 4px}
+  .help a{color:var(--accent)}
+  .linkrow{display:flex;flex-wrap:wrap;gap:8px 18px;justify-content:center;margin-top:18px}
   footer{margin-top:36px;font-size:13px;color:var(--soft);text-align:center}
 </style>
 </head>
 <body>
 <main>
+  <div class="topbar"><span class="brand">Ostrich</span><button class="quiet" id="hideAll" aria-label="Hide all: cover the screen">Hide all</button></div>
 
   <!-- Welcome -->
   <section id="v-welcome" hidden>
@@ -71,6 +84,65 @@
       <p class="soft" style="margin:0">Ostrich won't tell you what's right or wrong to do with your money. It shows you where you are.</p>
     </div>
     <button id="start">Take a look</button>
+  </section>
+
+  <!-- How does it feel to look? (screen 48) -->
+  <section id="v-feel" hidden>
+    <h1>How does it feel to look at your money?</h1>
+    <p class="soft">There is no right answer. This only sets your pace.</p>
+    <div class="choices" id="feelChoices">
+      <button type="button" data-feel="Calm">Calm</button>
+      <button type="button" data-feel="A bit tense">A bit tense</button>
+      <button type="button" data-feel="Tense">Tense</button>
+      <button type="button" data-feel="Very tense">Very tense</button>
+      <button type="button" data-feel="Too much">Too much</button>
+    </div>
+    <div class="card small" id="gentle" hidden>
+      <p><strong>Starting gently.</strong> Amounts start hidden, and you can show them when you're ready. You can change this any time.</p>
+      <p style="margin:0">If it feels like too much today, that's okay. <button class="link" type="button" id="feelTalk">Want to talk to someone?</button></p>
+    </div>
+    <div class="card small">
+      <p style="margin:0"><strong>Not a score.</strong> Ostrich doesn't grade this answer or share it. It stays on this device, and Ostrich is not therapy.</p>
+    </div>
+    <div class="stack">
+      <button id="feelNext">Next</button>
+      <button class="link" type="button" id="feelSkip">Skip this question</button>
+    </div>
+  </section>
+
+  <!-- What was sent? (screen 25) -->
+  <section id="v-sent" hidden>
+    <h1>What was sent?</h1>
+    <div class="card">
+      <p style="margin:0"><strong>Nothing.</strong> This prototype has no AI yet, and its code makes no network requests. Your numbers, your feeling and your history stay on this device.</p>
+    </div>
+    <h2>When the private AI reading arrives (on the roadmap)</h2>
+    <p class="small">Only totals like these would go to the AI, never account names, institutions or wallet addresses. The reading would run in a sealed, private computer on NEAR AI Cloud, so no one, including Ostrich, could see them. Today, none of this is sent:</p>
+    <pre id="sentJson"></pre>
+    <p class="small soft">Your feeling and your history would stay on this device unless you chose to include them. Check it yourself: the code is open source.</p>
+    <button class="quiet" id="sentBack">Back</button>
+  </section>
+
+  <!-- Want to talk to someone? (screen 34) -->
+  <section id="v-talk" hidden>
+    <h1>Want to talk to someone?</h1>
+    <p>Ostrich is not therapy, and you don't have to do this alone. Free options come first, always.</p>
+    <div class="card help small stack">
+      <div><h3>A nonprofit credit counselor</h3><p style="margin:0">Free or low-cost help with debt and a plan. Find one through the National Foundation for Credit Counseling: <a href="https://www.nfcc.org/">nfcc.org</a></p></div>
+      <div><h3>Free tax help, and money you may be owed</h3><p style="margin:0">IRS volunteer sites (VITA) prepare taxes for free if you qualify: <a href="https://www.irs.gov/individuals/free-tax-return-preparation-for-qualifying-taxpayers">irs.gov</a></p></div>
+      <div><h3>Someone you trust</h3><p style="margin:0">A friend or family member. Hiding a worry to protect someone can make it heavier to carry. Try: "Money has been hard lately. I don't need you to fix it. I didn't want to keep it from you."</p></div>
+    </div>
+    <div class="card help small">
+      <h3>Is someone controlling your money?</h3>
+      <p>Taking your pay, checking every dollar, keeping you from work or putting debt in your name can be a kind of abuse. It is not your fault.</p>
+      <p style="margin:0">The National Domestic Violence Hotline is free and private: call <strong>1-800-799-7233</strong>, or text <strong>START</strong> to <strong>88788</strong>. Need to leave fast? Tap <strong>Hide all</strong> at the top.</p>
+    </div>
+    <div class="card help small">
+      <h3>If things feel unsafe</h3>
+      <p style="margin:0">In the US, call or text <strong>988</strong> any time.</p>
+    </div>
+    <p class="small soft">These are links and numbers only. Ostrich sends nothing about you.</p>
+    <button class="quiet" id="talkBack">Back</button>
   </section>
 
   <!-- Enter numbers -->
@@ -110,6 +182,7 @@
         <circle cx="68" cy="11" r="1.8" fill="var(--bg)"/>
       </svg>
       <p class="looked">You looked.</p>
+      <p class="soft small" id="feltLine" hidden></p>
     </div>
 
     <div class="card">
@@ -130,7 +203,12 @@
       <p class="soft" style="margin:0">If you clear your browser's data, your looks go with it. Copy them first if you'd like to keep them.</p>
     </div>
 
-    <div class="stack">
+    <div class="linkrow">
+      <button class="link" type="button" id="toSent">What was sent?</button>
+      <button class="link" type="button" id="toTalk">Want to talk to someone?</button>
+    </div>
+
+    <div class="stack" style="margin-top:14px">
       <button class="quiet" id="again">Change today's numbers</button>
       <button class="quiet" id="copy">Copy my looks (CSV)</button>
       <button class="quiet" id="wipe">Delete everything</button>
@@ -140,6 +218,11 @@
 
   <footer>Ostrich prototype · made with Claude · <span id="storeNote"></span></footer>
 </main>
+
+<div class="cover" id="cover" hidden aria-label="Hidden screen">
+  <p class="soft">Hidden. Nothing is shown.</p>
+  <button class="quiet" id="holdShow">Hold to show</button>
+</div>
 
 <div class="dialog" id="confirm" hidden role="dialog" aria-modal="true" aria-labelledby="cTitle">
   <div class="card">
@@ -188,7 +271,7 @@
   }
   function $(id){ return document.getElementById(id); }
   function show(id){
-    ['v-welcome','v-enter','v-result'].forEach(function(v){ $(v).hidden = (v !== id); });
+    ['v-welcome','v-feel','v-enter','v-result','v-sent','v-talk'].forEach(function(v){ $(v).hidden = (v !== id); });
     window.scrollTo(0,0);
   }
 
@@ -199,6 +282,7 @@
     var nw = cur.cash + cur.invest - cur.owe;
     $('when').textContent = cur.date === today() ? 'Today' : niceDate(cur.date);
     $('nw').textContent = money(nw);
+    if (cur.feeling){ $('feltLine').hidden = false; $('feltLine').textContent = 'How it felt before you looked: ' + cur.feeling.toLowerCase() + '.'; } else { $('feltLine').hidden = true; }
     $('parts').textContent = hidden ? '' :
       money(cur.cash)+' cash + '+money(cur.invest)+' put away − '+money(cur.owe)+' owed';
 
@@ -221,6 +305,7 @@
       if (x.sample){ a.textContent += ' (made up)'; }
       r.appendChild(a); r.appendChild(b); h.appendChild(r);
     });
+    $('again').textContent = cur.date === today() ? "Change today's numbers" : "Take today's look";
     $('storeNote').textContent = canStore ? 'saved on this device' : "this browser won't save, so your looks last until you close the page";
     show('v-result');
   }
@@ -232,7 +317,58 @@
   }
 
   var usingSample = false;
-  $('start').onclick = function(){ fillForm(null); show('v-enter'); $('cash').focus(); };
+  var feeling = null, lastView = 'v-welcome';
+  function go(v){ lastView = currentView(); show(v); }
+  function currentView(){ var c='v-welcome'; ['v-welcome','v-feel','v-enter','v-result','v-sent','v-talk'].forEach(function(v){ if(!$(v).hidden) c=v; }); return c; }
+  function startLook(){
+    feeling = null;
+    Array.prototype.forEach.call(document.querySelectorAll('#feelChoices button'), function(b){ b.setAttribute('aria-pressed','false'); });
+    $('gentle').hidden = true; show('v-feel');
+  }
+  $('start').onclick = startLook;
+  Array.prototype.forEach.call(document.querySelectorAll('#feelChoices button'), function(b){
+    b.setAttribute('aria-pressed','false');
+    b.onclick = function(){
+      feeling = b.getAttribute('data-feel');
+      Array.prototype.forEach.call(document.querySelectorAll('#feelChoices button'), function(x){ x.setAttribute('aria-pressed', x===b ? 'true' : 'false'); });
+      $('gentle').hidden = !(feeling === 'Very tense' || feeling === 'Too much');
+    };
+  });
+  function toEnter(){
+    if (feeling === 'Very tense' || feeling === 'Too much'){
+      hidden = true; $('hide').checked = true;
+      try { localStorage.setItem('ostrich.hide','1'); } catch(e){}
+    }
+    var list = load(), cur = list[list.length-1];
+    fillForm(cur ? {cash:cur.cash, invest:cur.invest, owe:cur.owe} : null);
+    usingSample = !!(cur && cur.sample); $('sampleNote').hidden = !usingSample;
+    show('v-enter'); $('cash').focus();
+  }
+  $('feelNext').onclick = toEnter;
+  $('feelSkip').onclick = function(){ feeling = null; toEnter(); };
+  $('feelTalk').onclick = function(){ go('v-talk'); };
+  $('toTalk').onclick = function(){ go('v-talk'); };
+  $('talkBack').onclick = function(){ show(lastView); };
+  $('toSent').onclick = function(){
+    var list = load(), cur = list[list.length-1], prev = list.length>1 ? list[list.length-2] : null;
+    var nw = cur.cash + cur.invest - cur.owe;
+    var obj = { netWorth: Math.round(nw), changeSinceLastLook: prev ? Math.round(nw - (prev.cash+prev.invest-prev.owe)) : null,
+      cash: Math.round(cur.cash), putAway: Math.round(cur.invest), owed: Math.round(cur.owe) };
+    $('sentJson').textContent = JSON.stringify(obj, null, 2);
+    go('v-sent');
+  };
+  $('sentBack').onclick = function(){ show('v-result'); };
+
+  // Hide all: cover everything; hold the button to bring it back
+  $('hideAll').onclick = function(){ $('cover').hidden = false; };
+  (function(){
+    var t = null, btn = $('holdShow');
+    function down(e){ e.preventDefault(); btn.textContent = 'Keep holding'; t = setTimeout(function(){ $('cover').hidden = true; btn.textContent = 'Hold to show'; }, 800); }
+    function up(){ clearTimeout(t); btn.textContent = 'Hold to show'; }
+    btn.addEventListener('pointerdown', down); btn.addEventListener('pointerup', up);
+    btn.addEventListener('pointerleave', up); btn.addEventListener('pointercancel', up);
+    btn.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') { $('cover').hidden = true; } });
+  })();
   $('useSample').onclick = function(){
     usingSample = true;
     fillForm({cash: 640, invest: 1200, owe: 3850});
@@ -246,6 +382,7 @@
     e.preventDefault();
     var entry = { date: today(), cash: num($('cash').value), invest: num($('invest').value), owe: num($('owe').value) };
     if (usingSample) entry.sample = true;
+    if (feeling) entry.feeling = feeling;
     var list = load().filter(function(x){ return x.date !== entry.date; });
     list.push(entry);
     list.sort(function(a,b){ return a.date < b.date ? -1 : 1; });
@@ -255,6 +392,7 @@
 
   $('again').onclick = function(){
     var list = load(); var cur = list[list.length-1];
+    if (!cur || cur.date !== today()) { startLook(); return; }
     fillForm(cur && cur.date === today() ? cur : (cur ? {cash:cur.cash, invest:cur.invest, owe:cur.owe} : null));
     usingSample = !!(cur && cur.sample); $('sampleNote').hidden = !usingSample;
     show('v-enter');
@@ -267,8 +405,8 @@
   };
 
   $('copy').onclick = function(){
-    var rows = [['date','cash','put_away','owed','net_worth','made_up']];
-    load().forEach(function(x){ rows.push([x.date, x.cash, x.invest, x.owe, x.cash + x.invest - x.owe, x.sample ? 'yes' : 'no']); });
+    var rows = [['date','cash','put_away','owed','net_worth','made_up','feeling']];
+    load().forEach(function(x){ rows.push([x.date, x.cash, x.invest, x.owe, x.cash + x.invest - x.owe, x.sample ? 'yes' : 'no', x.feeling || '']); });
     var csv = rows.map(function(r){ return r.join(','); }).join('\n');
     var done = function(ok){ $('copied').textContent = ok ? 'Copied. Paste it into a note or a spreadsheet.' : "Couldn't copy here. Your looks are still saved on this device."; };
     try { navigator.clipboard.writeText(csv).then(function(){ done(true); }, function(){ done(false); }); }
