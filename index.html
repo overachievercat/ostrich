@@ -67,6 +67,10 @@
   .chart svg{display:block;width:100%;height:auto;touch-action:pan-y}
   .chart .tip{position:absolute;top:6px;pointer-events:none;background:var(--ink);color:var(--bg);font-size:13px;font-weight:600;padding:4px 8px;border-radius:8px;white-space:nowrap;transform:translateX(-50%)}
   .trend{font-size:15px;margin:8px 0 0}
+  .emojis{display:flex;justify-content:space-between;gap:6px;margin:10px 0 4px}
+  .emojis button{width:54px;height:54px;border-radius:50%;border:1px solid var(--line);background:var(--card);font-size:26px;line-height:1;cursor:pointer;padding:0}
+  .emojis button[aria-pressed="true"]{border:2px solid var(--ink);background:var(--peach)}
+  .feelrow{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
   .sample{background:var(--sand);border-radius:14px;padding:10px 14px;font-size:14px;margin-top:14px}
   [hidden]{display:none!important}
   body.darkbody{background:var(--ink)}
@@ -170,7 +174,20 @@
     <div class="number" id="nw"></div>
     <p class="change" id="compare"></p>
     <p class="soft small" id="parts" style="margin:0"></p>
-    <p class="soft small" id="feltLine" hidden style="margin-top:6px"></p>
+
+    <div class="card" id="feelCard">
+      <p class="label">Your feelings</p>
+      <p style="margin:0" id="feltLine">Before you looked, you skipped the question. That's fine.</p>
+      <p style="margin:12px 0 0;font-weight:600">And now that you've looked?</p>
+      <div class="emojis" id="afterChoices">
+        <button type="button" data-after="😰" aria-label="Anxious">😰</button>
+        <button type="button" data-after="😐" aria-label="Flat">😐</button>
+        <button type="button" data-after="🙂" aria-label="Okay">🙂</button>
+        <button type="button" data-after="😌" aria-label="Relieved">😌</button>
+        <button type="button" data-after="😔" aria-label="Sad">😔</button>
+      </div>
+      <p class="soft small" style="margin:6px 0 0" id="afterNote">Every feeling is welcome here. It stays on this device, beside today's number.</p>
+    </div>
 
     <div id="trendWrap" hidden>
       <p class="section" id="trendTitle">Your number over time</p>
@@ -307,8 +324,9 @@
     $('when').textContent = cur.date === today() ? 'Your number today' + (cur.sample ? ' (made up)' : '') : 'Your number on ' + niceDate(cur.date);
     $('nw').textContent = money(nw);
     $('parts').textContent = hidden ? '' : money(cur.cash)+' cash + '+money(cur.invest)+' invested - '+money(cur.owe)+' owed';
-    if (cur.feeling){ $('feltLine').hidden = false; $('feltLine').textContent = 'How it felt before you looked: ' + cur.feeling.toLowerCase() + '.'; }
-    else $('feltLine').hidden = true;
+    $('feltLine').textContent = cur.feeling ? 'Before you looked: ' + cur.feeling.toLowerCase() + '.' : "Before you looked, you skipped the question. That's fine.";
+    Array.prototype.forEach.call(document.querySelectorAll('#afterChoices button'), function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-after') === cur.after ? 'true' : 'false'); });
+    $('afterNote').textContent = cur.after ? 'Saved beside today\'s number, only on this device. You can change it.' : 'Every feeling is welcome here. It stays on this device, beside today\'s number.';
 
     var prev = list.length > 1 ? list[list.length-2] : null;
     if (!prev) $('compare').textContent = "Your first look. Next time, you'll see how it compares.";
@@ -325,6 +343,7 @@
     recent.forEach(function(x){
       var r = document.createElement('div'); r.className = 'row';
       var a = document.createElement('span'); a.textContent = (x.date === today() ? 'Today' : niceDate(x.date)) + (x.sample ? ' (made up)' : '');
+      if (x.after) a.textContent = x.after + '  ' + a.textContent;
       var b = document.createElement('span'); b.textContent = money(x.cash + x.invest - x.owe);
       r.appendChild(a); r.appendChild(b); h.appendChild(r);
     });
@@ -398,7 +417,9 @@
       var v = start + (end - start) * t + 260 * Math.sin(t * 11) + (rnd() - 0.5) * 220;
       if (t > 0.42 && t < 0.55) v -= 900 * Math.sin((t - 0.42) / 0.13 * Math.PI); // a car repair, then back
       v = Math.round(v / 10) * 10;
-      out.push({ date: iso(d), cash: 730, invest: 60, owe: 790 - v, sample: true });
+      var e = { date: iso(d), cash: 730, invest: 60, owe: 790 - v, sample: true };
+      if (rnd() < 0.6) e.after = ['😰','😐','🙂','😌','😔'][Math.floor(rnd() * 5)];
+      out.push(e);
     }
     save(out);
   }
@@ -457,6 +478,8 @@
     var entry = { date: today(), cash: num($('cash').value), invest: num($('invest').value), owe: num($('owe').value) };
     if (usingSample) entry.sample = true;
     if (feeling) entry.feeling = feeling;
+    var old = load().filter(function(x){ return x.date === entry.date; })[0];
+    if (old && old.after) entry.after = old.after;
     if (usingSample) seedDemo();
     var list = load().filter(function(x){ return x.date !== entry.date && (usingSample || !x.sample); });
     list.push(entry);
@@ -473,6 +496,13 @@
     show('v-enter');
   };
 
+  Array.prototype.forEach.call(document.querySelectorAll('#afterChoices button'), function(b){
+    b.onclick = function(){
+      var list = load(), cur = list[list.length-1]; if (!cur) return;
+      cur.after = (cur.after === b.getAttribute('data-after')) ? undefined : b.getAttribute('data-after');
+      save(list); renderResult();
+    };
+  });
   $('hideAmt').onclick = function(){ setHidden(!hidden); renderResult(); };
 
   $('toSent').onclick = function(){
@@ -486,8 +516,8 @@
   $('sentBack').onclick = function(){ show('v-result'); };
 
   $('copy').onclick = function(){
-    var rows = [['date','cash','invested','owed','net_worth','made_up','feeling']];
-    load().forEach(function(x){ rows.push([x.date, x.cash, x.invest, x.owe, x.cash + x.invest - x.owe, x.sample ? 'yes' : 'no', x.feeling || '']); });
+    var rows = [['date','cash','invested','owed','net_worth','made_up','feeling_before','feeling_after']];
+    load().forEach(function(x){ rows.push([x.date, x.cash, x.invest, x.owe, x.cash + x.invest - x.owe, x.sample ? 'yes' : 'no', x.feeling || '', x.after || '']); });
     var csv = rows.map(function(r){ return r.join(','); }).join('\n');
     var done = function(ok){ $('copied').textContent = ok ? 'Copied. Paste it into a note or a spreadsheet.' : "Couldn't copy here. Your looks are still saved on this device."; };
     try { navigator.clipboard.writeText(csv).then(function(){ done(true); }, function(){ done(false); }); }
