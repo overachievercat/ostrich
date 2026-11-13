@@ -10,6 +10,7 @@ Built for the NEAR Private AI Hackathon, New York, November 2026.
 
 ## In prototype (works today, in this repo)
 
+- **What is Ostrich?** A short opening page: what it is, why it's called Ostrich, and three promises (one look a day, your feelings count, only on your device), with the ostrich lifting its head.
 - **The daily look.** Enter cash, what you've put away and what you owe; see your net worth today. One look per day; changing today's numbers replaces today's look.
 - **"You looked."** Every look ends the same calm way, whatever the number, negative ones included.
 - **Compared with your last look.** "Up $140 since your last look (Thu, Nov 12)", in neutral colours.

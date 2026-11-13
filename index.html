@@ -44,6 +44,11 @@
   .lnks{display:flex;justify-content:center;gap:6px 18px;flex-wrap:wrap;margin-top:12px}
   button:focus-visible,input:focus-visible{outline:3px solid var(--peach);outline-offset:2px}
   .fine{color:var(--soft);font-size:14px;text-align:center;margin-top:14px}
+  .hero{display:flex;justify-content:center;margin:4px 0 6px}
+  .hero svg{width:150px;height:auto}
+  .point{display:flex;gap:14px;align-items:flex-start;padding:12px 2px;border-top:1px solid var(--line)}
+  .point:last-of-type{border-bottom:1px solid var(--line)}
+  .point .icon{font-size:26px;line-height:1.1}
   .rel{display:flex;gap:14px;align-items:flex-start;padding:12px 2px;border-top:1px solid var(--line)}
   .rel+.rel{border-bottom:1px solid var(--line)}
   .rel .icon{font-size:30px;line-height:1}
@@ -109,6 +114,21 @@
       <button class="pill sage" id="hideAll" aria-label="Hide all: cover the screen">Hide all</button>
     </div>
   </div>
+
+  <!-- What is Ostrich? (landing) -->
+  <section id="v-landing" hidden>
+    <div class="hero" id="artHero"></div>
+    <h1 class="big center">A private daily look at your money.</h1>
+    <p class="soft center">Many of us avoid looking at our money when the news might be bad, like an ostrich with its head in the sand. Ostrich makes the look small, calm and private, so lifting your head gets a little easier each day.</p>
+    <div style="margin-top:18px">
+      <div class="point"><span class="icon" aria-hidden="true">👀</span><div><h3>One look a day</h3><p class="soft" style="margin:0">Type three rough numbers and see where you stand today. Every number is welcome, negative ones too.</p></div></div>
+      <div class="point"><span class="icon" aria-hidden="true">💭</span><div><h3>Your feelings count too</h3><p class="soft" style="margin:0">Say how it feels to look. Ostrich keeps the feeling beside the number, so you can see both change over time.</p></div></div>
+      <div class="point"><span class="icon" aria-hidden="true">🔒</span><div><h3>Only on your device</h3><p class="soft" style="margin:0">No account, no ads, no data sold. Nothing you type is sent anywhere, and Ostrich never tells you what's right or wrong to do with your money.</p></div></div>
+    </div>
+    <button class="btn" id="landStart" style="margin-top:22px">Take a look</button>
+    <div class="lnks"><button class="lnk" id="landDemo">Try the demo with made-up numbers</button><button class="lnk" id="landBack" hidden>Back to your number</button></div>
+    <p class="fine">A prototype for the NEAR Private AI Hackathon, New York, 2026. Not therapy or financial advice.</p>
+  </section>
 
   <!-- Welcome (screen 1) -->
   <section id="v-welcome" hidden>
@@ -268,11 +288,11 @@
   var KEY = 'ostrich.looks.v1';
   var memory = [];
   var canStore = true;
-  var VIEWS = ['v-welcome','v-feel','v-enter','v-result','v-sent','v-talk'];
+  var VIEWS = ['v-landing','v-welcome','v-feel','v-enter','v-result','v-sent','v-talk'];
 
   function $(id){ return document.getElementById(id); }
   var art = $('ostrichArt').innerHTML;
-  $('artLooked').innerHTML = art; $('artSleep').innerHTML = art;
+  $('artLooked').innerHTML = art; $('artSleep').innerHTML = art; $('artHero').innerHTML = art;
 
   function load(){
     try { var s = localStorage.getItem(KEY); return s ? JSON.parse(s) : []; }
@@ -301,7 +321,7 @@
     var p = iso.split('-'); var d = new Date(+p[0], +p[1]-1, +p[2]);
     return d.toLocaleDateString('en-US',{weekday:'short', month:'short', day:'numeric'});
   }
-  function currentView(){ var c='v-welcome'; VIEWS.forEach(function(v){ if(!$(v).hidden) c=v; }); return c; }
+  function currentView(){ var c='v-landing'; VIEWS.forEach(function(v){ if(!$(v).hidden) c=v; }); return c; }
   function show(id){
     VIEWS.forEach(function(v){ $(v).hidden = (v !== id); });
     $('main').className = (id === 'v-sent') ? 'dark' : '';
@@ -322,7 +342,7 @@
 
   function renderResult(){
     var list = load();
-    if (!list.length){ show('v-welcome'); return; }
+    if (!list.length){ show('v-landing'); return; }
     var cur = list[list.length-1];
     var nw = cur.cash + cur.invest - cur.owe;
     $('when').textContent = cur.sample ? "A made-up member's number, demo only" : (cur.date === today() ? 'Your number today' : 'Your number on ' + niceDate(cur.date));
@@ -539,7 +559,7 @@
     save([]);
     try { localStorage.removeItem(KEY); } catch(e){}
     $('confirm').hidden = true; $('copied').textContent = '';
-    show('v-welcome');
+    show('v-landing');
   };
 
   // Tap Ostrich to go back to the first screen; press and hold it to hide all
@@ -551,11 +571,14 @@
     logo.addEventListener('click', function(){
       if (held) { held = false; return; }
       logo.blur();
-      $('backToLook').hidden = !load().length;
-      show('v-welcome');
+      $('landBack').hidden = !load().length;
+      show('v-landing');
     });
   })();
   $('backToLook').onclick = function(){ renderResult(); };
+  $('landBack').onclick = function(){ renderResult(); };
+  $('landStart').onclick = function(){ $('backToLook').hidden = !load().length; show('v-welcome'); };
+  $('landDemo').onclick = function(){ demo = true; startLook(); };
 
   // Hide all: cover everything; press and hold to bring it back
   $('hideAll').onclick = function(){ $('cover').hidden = false; };
@@ -571,7 +594,7 @@
   try { hidden = localStorage.getItem('ostrich.hide') === '1'; } catch(e){}
   setHidden(hidden);
   load();
-  if (load().length) renderResult(); else show('v-welcome');
+  if (load().length) renderResult(); else show('v-landing');
 })();
 </script>
 </body>
