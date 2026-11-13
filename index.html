@@ -44,7 +44,8 @@
   .lnks{display:flex;justify-content:center;gap:6px 18px;flex-wrap:wrap;margin-top:12px}
   button:focus-visible,input:focus-visible{outline:3px solid var(--peach);outline-offset:2px}
   .fine{color:var(--soft);font-size:14px;text-align:center;margin-top:14px}
-  .rel{display:flex;gap:14px;align-items:flex-start}
+  .rel{display:flex;gap:14px;align-items:flex-start;padding:12px 2px;border-top:1px solid var(--line)}
+  .rel+.rel{border-bottom:1px solid var(--line)}
   .rel .icon{font-size:30px;line-height:1}
   .chips{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:14px 0 4px}
   .chips button{min-height:56px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:600 13px/1.15 var(--sans);padding:6px 4px;cursor:pointer}
@@ -113,8 +114,8 @@
   <section id="v-welcome" hidden>
     <h1 class="big">You have two relationships with money.</h1>
     <p class="soft">Money is not only math. Fear, hope, shame and pride show up too, and they are all welcome here.</p>
-    <div class="card rel"><span class="icon" aria-hidden="true">🔢</span><div><h3>The number</h3><p class="soft" style="margin:0">What you have and what you owe.</p></div></div>
-    <div class="card rel"><span class="icon" aria-hidden="true">💭</span><div><h3>The feeling</h3><p class="soft" style="margin:0">What it is like to look at that number today.</p></div></div>
+    <div class="rel" style="margin-top:14px"><span class="icon" aria-hidden="true">🔢</span><div><h3>The number</h3><p class="soft" style="margin:0">What you have and what you owe.</p></div></div>
+    <div class="rel" style="margin-bottom:14px"><span class="icon" aria-hidden="true">💭</span><div><h3>The feeling</h3><p class="soft" style="margin:0">What it is like to look at that number today.</p></div></div>
     <p>Ostrich keeps both, privately on your device. It has no account and no server for your numbers, and nothing you type is sent anywhere.</p>
     <button class="btn" id="start" style="margin-top:22px">Next</button>
     <div class="lnks"><button class="lnk" id="startDemo">Try the demo</button><button class="lnk" id="backToLook" hidden>Back to your number</button></div>
@@ -549,6 +550,7 @@
     logo.addEventListener('contextmenu', function(e){ e.preventDefault(); });
     logo.addEventListener('click', function(){
       if (held) { held = false; return; }
+      logo.blur();
       $('backToLook').hidden = !load().length;
       show('v-welcome');
     });
