@@ -24,6 +24,7 @@ Built for the NEAR Private AI Hackathon, New York, November 2026.
 - **What was sent?** Shows that nothing left your device, and exactly which totals the private AI reading would see once it exists.
 - **Want to talk to someone?** Free help first: nonprofit credit counselling, free tax help, someone you trust, the National Domestic Violence Hotline and 988. Links and numbers only; Ostrich sends nothing about you.
 - **Your feelings, beside your number.** The daily look shows how you felt before you looked, and asks how you feel now, with five emoji. Your feeling is kept beside that day's number in Your looks.
+- **Today's snack.** After the daily look, one short snack: "Your net worth is not your self-worth." You can keep a line in your own words ("My number is not my worth."), see why Ostrich says this and how strong the evidence is, and finish with "That's this snack. What you do next is yours."
 - **Your number over time.** After a few looks, one line shows your number since you started, with a tap-to-read value for any day. No red or green.
 - **Made-up numbers.** Try it without typing your own; the demo adds six months of a made-up member's looks so you can see the line, all labelled "made up". Saving your own numbers clears the made-up ones.
 

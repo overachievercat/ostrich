@@ -85,7 +85,7 @@
   .group{font-weight:600;margin:18px 0 6px}
   details.src{background:var(--card);border:1px solid var(--line);border-radius:16px;margin:8px 0;padding:0}
   details.src summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;cursor:pointer}
-  details.src summary::-webkit-details-marker{display:none}
+  details.src summary::-webkit-details-marker, .why summary::-webkit-details-marker{display:none}
   details.src summary .nm{font-weight:600}
   details.src summary .how{display:block;font-weight:400;font-size:13px;color:var(--soft)}
   details.src .more{padding:0 14px 12px;font-size:14px;color:var(--soft)}
@@ -107,6 +107,17 @@
   .dark .card{background:#22345A;border-color:#3A4C75;color:#E8EDF5}
   .dark .card .label{color:var(--sand)}
   .dark .concept, .dark .concept b{color:var(--ink)}
+  .snackhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .snackart{background:#E8E1D3;border-radius:22px;height:140px;display:flex;align-items:center;justify-content:center;font-size:64px;margin-bottom:14px}
+  .keep input{width:100%;height:48px;border:1.5px solid var(--ink);border-radius:16px;background:var(--card);padding:0 14px;font:italic 19px var(--serif);color:var(--ink);margin:8px 0 6px}
+  .why{display:block;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:14px 0}
+  .why .tag{margin:0;background:#E8E1D3;color:var(--ink)}
+  .endnote{background:var(--sage);border-radius:18px;padding:12px 16px;margin:16px 0}
+  .endnote p{margin:0}
+  .snackcard{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--sage);border:0;border-radius:20px;padding:14px 16px;margin:12px 0;color:var(--ink);cursor:pointer;font:inherit}
+  .snackcard .ic{font-size:30px}
+  .snackcard .t{font-family:var(--serif);font-size:19px;display:block}
+  .snackcard .k{font-size:13px;font-weight:600;color:var(--green-ink)}
   [hidden]{display:none!important}
   body.darkbody{background:var(--ink)}
   .dark{color:#E8EDF5}
@@ -241,6 +252,8 @@
       <p class="soft small" style="margin:6px 0 0" id="afterNote">Every feeling is welcome here. It stays on this device, beside today's number.</p>
     </div>
 
+    <button class="snackcard" id="toSnack" type="button"><span class="ic" aria-hidden="true">🌱</span><span><span class="k" id="snackKicker">Today's snack</span><span class="t">Your net worth is not your self-worth.</span></span></button>
+
     <div id="trendWrap" hidden>
       <p class="section" id="trendTitle">Your number over time</p>
       <div class="card chart" id="chart" style="margin-top:0"></div>
@@ -279,6 +292,24 @@
     <p><b>Check it yourself:</b> the code is open source.</p>
     <button class="btn" id="sentPrivate" style="margin-top:20px;background:var(--sand);color:var(--ink)">How the private AI would work (concept)</button>
     <button class="btn outline" id="sentBack">Close</button>
+  </section>
+
+  <!-- Today's snack: Your net worth is not your self-worth (Snack_NotSelf) -->
+  <section id="v-snack" hidden>
+    <div class="snackhead"><span class="pill sage" style="cursor:default">Snack · Believe you can</span><button class="pill plain" id="snackSkip">Skip</button></div>
+    <div class="snackart" aria-hidden="true">🌱</div>
+    <h1>Your net worth is not your self-worth.</h1>
+    <p>Your number also carries wages, prices, medical bills, student loans and what your family could pass on. It is not a score of your choices.</p>
+    <div class="card keep">
+      <label for="keepLine" style="font-weight:600">A line to keep</label>
+      <input id="keepLine" placeholder="My number is not my worth." autocomplete="off">
+      <p class="label small" style="margin:0" id="keepNote">Kept on this device, in your story</p>
+    </div>
+    <details class="why"><summary style="display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;list-style:none"><span>Why?</span><span class="tag">Association · message untested</span></summary>
+      <p class="small soft" style="margin:10px 0 0">People whose sense of worth rises and falls with money tend to feel more stress about it (Park and others, 2017, on financially contingent self-worth). That's an association, and this exact message hasn't been tested yet.</p>
+    </details>
+    <div class="endnote"><p style="font-family:var(--serif);font-size:19px">That's this snack.</p><p class="soft">What you do next is yours.</p></div>
+    <button class="btn" id="snackDone">Done</button>
   </section>
 
   <!-- Concept: your accounts, kept up to date -->
@@ -394,7 +425,7 @@
   var KEY = 'ostrich.looks.v1';
   var memory = [];
   var canStore = true;
-  var VIEWS = ['v-landing','v-welcome','v-feel','v-enter','v-result','v-sent','v-talk','v-connect','v-private'];
+  var VIEWS = ['v-landing','v-welcome','v-feel','v-enter','v-result','v-sent','v-talk','v-connect','v-private','v-snack'];
 
   function $(id){ return document.getElementById(id); }
   var art = $('ostrichArt').innerHTML;
@@ -480,6 +511,8 @@
     });
     if (list.length > 7){ var more = document.createElement('p'); more.className = 'soft small'; more.style.margin = '8px 0 0'; more.textContent = 'And ' + (list.length - 7) + ' earlier looks, in the line above.'; h.appendChild(more); }
     drawChart(list);
+    var sd = null, ln = null; try { sd = localStorage.getItem('ostrich.snackDone'); ln = localStorage.getItem('ostrich.line'); } catch(e){}
+    $('snackKicker').textContent = sd === today() ? "Today's snack · done · your line: " + (ln || '') : "Today's snack";
     $('again').textContent = cur.date === today() ? "Change today's numbers" : "Take today's look";
     show('v-result');
   }
@@ -650,6 +683,17 @@
     go('v-sent');
   };
   $('sentBack').onclick = function(){ show('v-result'); };
+  $('toSnack').onclick = function(){
+    try { $('keepLine').value = localStorage.getItem('ostrich.line') || ''; } catch(e){}
+    show('v-snack');
+  };
+  function snackEnd(done){
+    var v = $('keepLine').value.trim();
+    try { if (done) { localStorage.setItem('ostrich.line', v || 'My number is not my worth.'); localStorage.setItem('ostrich.snackDone', today()); } } catch(e){}
+    renderResult();
+  }
+  $('snackDone').onclick = function(){ snackEnd(true); };
+  $('snackSkip').onclick = function(){ snackEnd(false); };
   var conceptFrom = 'v-result';
   function concept(v){ conceptFrom = currentView(); show(v); }
   $('enterConnect').onclick = function(){ concept('v-connect'); };
