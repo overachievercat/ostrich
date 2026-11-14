@@ -6,7 +6,31 @@ Many people avoid looking at their money when the news might be bad (the "ostric
 
 Built for the NEAR Private AI Hackathon, New York, November 2026.
 
-**Try it:** [overachievercat.github.io/ostrich](https://overachievercat.github.io/ostrich/), on any phone or computer. Tap "Try it with made-up numbers" if you'd rather not type your own.
+**Try it:** [overachievercat.github.io/ostrich](https://overachievercat.github.io/ostrich/), on any phone or computer. Tap "Try the demo with made-up numbers" if you'd rather not type your own.
+
+## Try it in two minutes
+
+1. Open the live link above. You see **What is Ostrich?**, with three promises.
+2. Tap **Try the demo with made-up numbers**. You see one question, how it feels to look; pick any answer and tap **Next**. You see three totals already filled in, and a banner saying they are made up.
+3. Tap **See my number**. You see the net worth, **"You looked."**, how you felt before, five emoji to say how you feel now, and a line of six months of made-up looks.
+4. Tap the **Today's snack** card. You see "Your net worth is not your self-worth", a line you can keep, and "Why?" with its source.
+5. Back on your number, tap **What was sent?**. You see that nothing left your device, and the only totals a private AI reading would ever get.
+6. Tap **Hide all** at the top. The screen is covered; press and hold **Hold to show** to bring it back.
+7. Tap **Your accounts (concept)** or **How the private AI works (concept)**. Each screen is labelled "Concept · not connected".
+8. To use your own numbers: tap **Change today's numbers**, then **Next**, then **Use my own numbers instead**; type three totals and tap **See my number**. The made-up looks are cleared. Reload the page: your look is still there, saved only in this browser.
+
+## Run it yourself
+
+No install and no build step. Either open `index.html` in a browser, or serve the folder:
+
+```
+git clone https://github.com/overachievercat/ostrich.git
+cd ostrich
+python3 -m http.server 8000
+# then open http://localhost:8000
+```
+
+There are no API keys, no server and no network requests.
 
 ## In prototype (works today, in this repo)
 
@@ -47,6 +71,18 @@ Two sets of screens show where Ostrich is going. Each is labelled "Concept · no
 
 One HTML file with plain CSS and JavaScript, plus the Newsreader and Inter fonts in `fonts/` (SIL Open Font License), shipped with the app so opening it sends no request anywhere. No build step, no dependencies, no tracking. The look follows the Ostrich screen designs.
 
+## NEAR in this submission (honest scope)
+
+This submission is for Track 03, Privacy & Private AI. The working prototype is the private, on-device part: it sends nothing anywhere. The NEAR parts are **designed, not built**: the private AI reading on NEAR AI Cloud (a TEE with attestation) and read-only NEAR wallet and Intents balances are shown as clickable screens labelled "Concept · not connected". They make no calls to NEAR. A real NEAR AI Cloud call needs an API key, and keys are never put in this public repo.
+
+## Built during the hackathon
+
+- Every commit in this repo is from November 13 and 14, 2026, during the hackathon. There is no earlier code. The repo was created for this event.
+- The submitted version is tagged `hackathon-submission`.
+- Built solo by Nadia Choi. Most of the code was written by AI (Claude Code, by Anthropic) from her designs, decisions and testing with five people; she reviewed and tested each change.
+- No libraries, templates or boilerplate. The only third-party files are the Newsreader and Inter fonts (SIL Open Font License 1.1; licences in `fonts/`).
+- Nadia is not submitting any other project.
+
 ## Licence
 
-Open source. Licence to be added.
+MIT. See [LICENSE](LICENSE). The fonts in `fonts/` keep their own SIL Open Font License.
