@@ -118,6 +118,8 @@
   .snackcard .ic{font-size:30px}
   .snackcard .t{font-family:var(--serif);font-size:19px;display:block}
   .snackcard .k{font-size:13px;font-weight:600;color:var(--green-ink)}
+  .snackcard .ln{display:block;font-size:14px;font-style:italic;color:var(--ink);margin-top:2px}
+  .snackcard .cta{display:block;font-size:14px;font-weight:600;color:var(--green);text-decoration:underline;margin-top:6px}
   [hidden]{display:none!important}
   body.darkbody{background:var(--ink)}
   .dark{color:#E8EDF5}
@@ -252,7 +254,7 @@
       <p class="soft small" style="margin:6px 0 0" id="afterNote">Every feeling is welcome here. It stays on this device, beside today's number.</p>
     </div>
 
-    <button class="snackcard" id="toSnack" type="button"><span class="ic" aria-hidden="true">🌱</span><span><span class="k" id="snackKicker">Today's snack</span><span class="t">Your net worth is not your self-worth.</span></span></button>
+    <button class="snackcard" id="toSnack" type="button"><span class="ic" aria-hidden="true">🌱</span><span><span class="k" id="snackKicker">Today's snack</span><span class="t">Your net worth is not your self-worth.</span><span class="ln" id="snackLine" hidden></span><span class="cta">Tap here to learn more ›</span></span></button>
 
     <div id="trendWrap" hidden>
       <p class="section" id="trendTitle">Your number over time</p>
@@ -512,7 +514,8 @@
     if (list.length > 7){ var more = document.createElement('p'); more.className = 'soft small'; more.style.margin = '8px 0 0'; more.textContent = 'And ' + (list.length - 7) + ' earlier looks, in the line above.'; h.appendChild(more); }
     drawChart(list);
     var sd = null, ln = null; try { sd = localStorage.getItem('ostrich.snackDone'); ln = localStorage.getItem('ostrich.line'); } catch(e){}
-    $('snackKicker').textContent = sd === today() ? "Today's snack · done · your line: " + (ln || '') : "Today's snack";
+    $('snackKicker').textContent = sd === today() ? "Today's snack · done" : "Today's snack";
+    $('snackLine').hidden = !(sd === today() && ln); $('snackLine').textContent = ln ? 'Your line: ' + ln : '';
     $('again').textContent = cur.date === today() ? "Change today's numbers" : "Take today's look";
     show('v-result');
   }
