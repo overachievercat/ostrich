@@ -44,6 +44,10 @@
   .lnks{display:flex;justify-content:center;gap:6px 18px;flex-wrap:wrap;margin-top:12px}
   button:focus-visible,input:focus-visible{outline:3px solid var(--peach);outline-offset:2px}
   .fine{color:var(--soft);font-size:14px;text-align:center;margin-top:14px}
+  .near{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+  .nearrow{display:flex;gap:8px;align-items:stretch}
+  .nearrow input{flex:1;min-width:0}
+  .nearrow .btn{width:auto;margin:0;padding:0 18px}
   .hero{display:flex;justify-content:center;margin:4px 0 6px}
   .hero svg{width:150px;height:auto}
   .point{display:flex;gap:14px;align-items:flex-start;padding:12px 2px;border-top:1px solid var(--line)}
@@ -224,6 +228,12 @@
         <div class="row" style="border:0;padding:0"><label for="invest">Anything invested, including crypto</label></div>
         <input id="invest" inputmode="decimal" autocomplete="off" placeholder="0">
       </div>
+      <div class="field near" id="nearBox">
+        <div class="row" style="border:0;padding:0"><label for="nearAcct">Have a NEAR account? Read its balance (optional)</label></div>
+        <div class="nearrow"><input id="nearAcct" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="yourname.near"><button class="btn outline" type="button" id="nearRead">Read</button></div>
+        <p class="hint" id="nearOut" aria-live="polite"></p>
+        <p class="hint">Read only: Ostrich can't sign or move anything. This is the one thing that leaves your device: the account name goes to a public NEAR server to read its balance, which is public onchain anyway. Your other numbers stay here.</p>
+      </div>
       <button class="btn" type="submit" style="margin-top:24px">See my number</button>
       <button class="btn outline" type="button" id="useSample">Try the demo</button>
       <button class="btn outline" type="button" id="useOwn" hidden>Use my own numbers instead</button>
@@ -285,7 +295,8 @@
   <!-- What was sent? (screen 25) -->
   <section id="v-sent" hidden>
     <h1>What was sent?</h1>
-    <p><b>Nothing.</b> This prototype has no AI yet, and its code makes no network requests.</p>
+    <p id="sentNone"><b>Nothing.</b> This prototype has no AI yet, and your numbers never leave this device.</p>
+    <p id="sentNear" hidden></p>
     <p>When the private AI reading arrives, only totals like these would go to it. No account names, no institutions, and no wallet addresses. Today, none of this is sent:</p>
     <pre id="sentJson"></pre>
     <p><b>Your history</b> stays on this device.</p>
@@ -677,12 +688,77 @@
   });
   $('hideAmt').onclick = function(){ setHidden(!hidden); renderResult(); };
 
+  // Real NEAR read (read only, no keys): balance from a public RPC, USD price from NEAR Intents.
+  function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  var NEAR_RPCS = ['https://free.rpc.fastnear.com', 'https://rpc.mainnet.fastnear.com', 'https://near.drpc.org'];
+  var nearAdded = 0;
+  function nearBalance(acct){
+    var body = JSON.stringify({jsonrpc:'2.0', id:'ostrich', method:'query', params:{request_type:'view_account', finality:'final', account_id:acct}});
+    var i = 0;
+    function tryNext(lastErr){
+      if (i >= NEAR_RPCS.length) return Promise.reject(lastErr || new Error('rpc'));
+      var url = NEAR_RPCS[i++];
+      return fetch(url, {method:'POST', headers:{'Content-Type':'application/json'}, body:body})
+        .then(function(r){ return r.json(); })
+        .then(function(j){
+          if (j.error || (j.result && j.result.error)) {
+            var msg = JSON.stringify(j.error || j.result.error);
+            if (/UNKNOWN_ACCOUNT|does not exist/i.test(msg)) { var e = new Error('noaccount'); e.final = true; throw e; }
+            throw new Error('rpc');
+          }
+          return { yocto: j.result.amount, rpc: url.replace('https://','') };
+        })
+        .catch(function(e){ if (e.final) throw e; return tryNext(e); });
+    }
+    return tryNext();
+  }
+  function yoctoToNear(y){
+    y = String(y || '0').padStart(25, '0');
+    var whole = y.slice(0, y.length - 24), frac = y.slice(y.length - 24, y.length - 20);
+    return parseFloat(whole + '.' + frac);
+  }
+  function nearPrice(){
+    return fetch('https://1click.chaindefuser.com/v0/tokens').then(function(r){ return r.json(); }).then(function(list){
+      var t = (list || []).filter(function(x){ return x.assetId === 'nep141:wrap.near'; })[0];
+      if (!t || !(parseFloat(t.price) > 0)) throw new Error('price');
+      return { usd: parseFloat(t.price), at: t.priceUpdatedAt };
+    });
+  }
+  $('nearRead').onclick = function(){
+    var acct = $('nearAcct').value.trim().toLowerCase(), out = $('nearOut');
+    if (!/^(([a-z\d]+[-_])*[a-z\d]+\.)*([a-z\d]+[-_])*[a-z\d]+$/.test(acct) || acct.length < 2 || acct.length > 64) {
+      out.textContent = 'That doesn\'t look like a NEAR account name. Try something like yourname.near.'; return;
+    }
+    out.textContent = 'Reading ' + acct + ' from NEAR\u2026';
+    $('nearRead').disabled = true;
+    nearBalance(acct).then(function(b){
+      var amt = yoctoToNear(b.yocto);
+      try { localStorage.setItem('ostrich.near', JSON.stringify({account: acct, rpc: b.rpc, at: new Date().toISOString()})); } catch(e){}
+      return nearPrice().then(function(p){
+        var usd = Math.round(amt * p.usd * 100) / 100;
+        var inv = parseFloat(String($('invest').value).replace(/[^0-9.\-]/g, '')) || 0;
+        inv = Math.max(0, inv - nearAdded) + usd; nearAdded = usd;
+        $('invest').value = Math.round(inv * 100) / 100;
+        out.textContent = acct + ' holds ' + amt.toLocaleString('en-US', {maximumFractionDigits: 4}) + ' NEAR, about ' + money(usd) +
+          ' at $' + p.usd.toFixed(2) + ' per NEAR (NEAR Intents price). Added to "Anything invested". Staked NEAR isn\'t counted yet.';
+      }, function(){
+        out.textContent = acct + ' holds ' + amt.toLocaleString('en-US', {maximumFractionDigits: 4}) + ' NEAR. The price couldn\'t be loaded right now, so nothing was added; you can add its dollar value to "Anything invested" yourself.';
+      });
+    }, function(e){
+      out.textContent = e && e.message === 'noaccount' ? 'NEAR has no account called ' + acct + '. Check the spelling.' : 'NEAR couldn\'t be reached right now. Your other numbers are fine; try again in a moment.';
+    }).then(function(){ $('nearRead').disabled = false; });
+  };
+  $('nearAcct').addEventListener('keydown', function(e){ if (e.key === 'Enter') { e.preventDefault(); $('nearRead').click(); } });
+
   $('toSent').onclick = function(){
     var list = load(), cur = list[list.length-1], prev = list.length>1 ? list[list.length-2] : null;
     var nw = cur.cash + cur.invest - cur.owe;
     var obj = { netWorth: Math.round(nw), changeSinceLastLook: prev ? Math.round(nw - (prev.cash+prev.invest-prev.owe)) : null,
       totalCash: Math.round(cur.cash), totalInvested: Math.round(cur.invest), totalOwed: Math.round(cur.owe) };
     $('sentJson').textContent = JSON.stringify(obj, null, 2);
+    var nr = null; try { nr = JSON.parse(localStorage.getItem('ostrich.near') || 'null'); } catch(e){}
+    $('sentNone').hidden = !!nr; $('sentNear').hidden = !nr;
+    if (nr) $('sentNear').innerHTML = '<b>One thing, when you tapped Read:</b> the NEAR account name <b>' + esc(nr.account) + '</b> went to a public NEAR server (' + esc(nr.rpc) + ') to read its balance, and Ostrich fetched the NEAR price list from NEAR Intents. Nothing else was sent: no other numbers, no feelings, no history. There is no AI yet.';
     go('v-sent');
   };
   $('sentBack').onclick = function(){ show('v-result'); };
@@ -719,7 +795,8 @@
   $('cNo').onclick = function(){ $('confirm').hidden = true; };
   $('cYes').onclick = function(){
     save([]);
-    try { localStorage.removeItem(KEY); } catch(e){}
+    try { localStorage.removeItem(KEY); localStorage.removeItem('ostrich.near'); } catch(e){}
+    nearAdded = 0; $('nearAcct').value = ''; $('nearOut').textContent = '';
     $('confirm').hidden = true; $('copied').textContent = '';
     show('v-landing');
   };

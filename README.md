@@ -17,7 +17,8 @@ Built for the NEAR Private AI Hackathon, New York, November 2026.
 5. Back on your number, tap **What was sent?**. You see that nothing left your device, and the only totals a private AI reading would ever get.
 6. Tap **Hide all** at the top. The screen is covered; press and hold **Hold to show** to bring it back.
 7. Tap **Your accounts (concept)** or **How the private AI works (concept)**. Each screen is labelled "Concept · not connected".
-8. To use your own numbers: tap **Change today's numbers**, then **Next**, then **Use my own numbers instead**; type three totals and tap **See my number**. The made-up looks are cleared. Reload the page: your look is still there, saved only in this browser.
+8. On the numbers screen, type a NEAR account (for example `near`) in **Have a NEAR account?** and tap **Read**. You see its NEAR balance and its dollar value, added to "Anything invested". Tap **See my number**, then **What was sent?**: it names the account that was sent, and nothing else.
+9. To use your own numbers: tap **Change today's numbers**, then **Next**, then **Use my own numbers instead**; type three totals and tap **See my number**. The made-up looks are cleared. Reload the page: your look is still there, saved only in this browser.
 
 ## Run it yourself
 
@@ -30,7 +31,7 @@ python3 -m http.server 8000
 # then open http://localhost:8000
 ```
 
-There are no API keys, no server and no network requests.
+There are no API keys and no server. The only network calls are the optional NEAR read: `POST` `view_account` to `https://free.rpc.fastnear.com` (falling back to `rpc.mainnet.fastnear.com`, then `near.drpc.org`) and `GET https://1click.chaindefuser.com/v0/tokens` for the NEAR price.
 
 ## In prototype (works today, in this repo)
 
@@ -40,7 +41,7 @@ There are no API keys, no server and no network requests.
 - **Compared with your last look.** "Up $140 since your last look (Thu, Nov 12)", in neutral colours.
 - **Your looks.** A list of every daily look, newest first.
 - **Hide amounts.** One switch hides every number on screen.
-- **Stays on your device.** Looks are saved in your browser's local storage. There is no account, no server and no network request in the code.
+- **Stays on your device.** Looks are saved in your browser's local storage. There is no account and no server. The only network request is the optional NEAR read below, and only when you tap Read.
 - **Copy my looks (CSV).** Your data, yours to take.
 - **Delete everything.** One button, with a confirm step.
 - **How does it feel to look?** One question before the numbers: calm to too much. It only sets your pace: "very tense" or "too much" starts with amounts hidden and offers someone to talk to. Not a score; it stays on your device.
@@ -50,6 +51,7 @@ There are no API keys, no server and no network requests.
 - **Your feelings, beside your number.** The daily look shows how you felt before you looked, and asks how you feel now, with five emoji. Your feeling is kept beside that day's number in Your looks.
 - **Today's snack.** After the daily look, one short snack: "Your net worth is not your self-worth." You can keep a line in your own words ("My number is not my worth."), see why Ostrich says this and how strong the evidence is, and finish with "That's this snack. What you do next is yours."
 - **Your number over time.** After a few looks, one line shows your number since you started, with a tap-to-read value for any day. No red or green.
+- **Read a real NEAR account (new, works today).** On the numbers screen, type a NEAR mainnet account (for example `yourname.near`) and tap **Read**. Ostrich reads its NEAR balance from a public NEAR RPC (FastNEAR, with fallbacks), gets the NEAR price in US dollars from the NEAR Intents 1Click token list, and adds the dollar value to "Anything invested". Read only: no wallet connection, no signing, no API key. Staked NEAR isn't counted yet. "What was sent?" then says exactly what left the device: the account name, and nothing else.
 - **Made-up numbers.** Try it without typing your own; the demo adds six months of a made-up member's looks so you can see the line, all labelled "made up". Saving your own numbers clears the made-up ones.
 
 ## Concept screens (clickable, not connected)
@@ -69,11 +71,14 @@ Two sets of screens show where Ostrich is going. Each is labelled "Concept · no
 
 ## How it's made
 
-One HTML file with plain CSS and JavaScript, plus the Newsreader and Inter fonts in `fonts/` (SIL Open Font License), shipped with the app so opening it sends no request anywhere. No build step, no dependencies, no tracking. The look follows the Ostrich screen designs.
+One HTML file with plain CSS and JavaScript, plus the Newsreader and Inter fonts in `fonts/` (SIL Open Font License), shipped with the app so opening it sends no request anywhere. The NEAR read uses the browser's built-in `fetch`, with no SDK. No build step, no dependencies, no tracking. The look follows the Ostrich screen designs.
 
 ## NEAR in this submission (honest scope)
 
-This submission is for Track 03, Privacy & Private AI. The working prototype is the private, on-device part: it sends nothing anywhere. The NEAR parts are **designed, not built**: the private AI reading on NEAR AI Cloud (a TEE with attestation) and read-only NEAR wallet and Intents balances are shown as clickable screens labelled "Concept · not connected". They make no calls to NEAR. A real NEAR AI Cloud call needs an API key, and keys are never put in this public repo.
+This submission is for Track 03, Privacy & Private AI.
+
+- **Built and working:** the read-only NEAR account read (NEAR RPC `view_account` plus the NEAR Intents 1Click price list), written on November 14 during the hackathon. It sends only the account name you type, and "What was sent?" says so. The rest of the prototype keeps everything on your device.
+- **Designed, not built:** the private AI reading on NEAR AI Cloud (a TEE with attestation), NEAR Intents balances, staked NEAR and other chains. These are clickable screens labelled "Concept · not connected" and make no calls. A real NEAR AI Cloud call needs an API key, and keys are never put in this public repo.
 
 ## Built during the hackathon
 
