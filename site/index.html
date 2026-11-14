@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ostrich · one number to look at every day</title>
+<meta name="description" content="Ostrich is a calm, private daily look at your net worth. No red or green, no streaks, no judgment. Built at NEAR HACKATHON, November 2026.">
+<style>
+@font-face{font-family:'Newsreader';src:url('../fonts/newsreader-latin-400-normal.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Inter';src:url('../fonts/inter-latin-400-normal.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Inter';src:url('../fonts/inter-latin-600-normal.woff2') format('woff2');font-weight:600;font-display:swap}
+:root{--ink:#14213D;--paper:#EEF1EA;--card:#F8F9F5;--line:#CBD2C6;--blue:#1D5B8F;--peach:#F2B880;--sand:#F2D7A1;--green:#2F4A3A;--sage:#E3EBE1;--soft:#3C4A66;--mute:#4A5568;--navy2:#1F3158}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,Arial,sans-serif;font-size:18px;line-height:1.55}
+a{color:var(--blue)}
+h1,h2,h3,.serif{font-family:Newsreader,Georgia,serif;font-weight:400;line-height:1.12;margin:0}
+h1{font-size:clamp(40px,6vw,68px)}
+h2{font-size:clamp(32px,4.4vw,52px)}
+h3{font-size:26px}
+p{margin:0}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+section{padding:96px 0}
+section+section{border-top:1px solid var(--line)}
+.eb{font-size:15px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--blue);margin-bottom:18px}
+.lead{font-size:21px;color:var(--soft);max-width:760px;margin-top:20px}
+.stack>*+*{margin-top:20px}
+.grid{display:grid;gap:20px}
+.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:900px){.g3,.g4{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr}section{padding:64px 0}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px 26px}
+.card.dark{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.card.dark .k{color:var(--peach)}
+.card.sand{background:var(--sand);border-color:var(--sand)}
+.k{font-size:14px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:8px}
+.card h3{margin-bottom:8px}
+.card p+p{margin-top:10px}
+.small{font-size:15px;color:var(--mute)}
+.big{font-family:Newsreader,Georgia,serif;font-size:64px;line-height:1}
+.tag{display:inline-block;font-size:13px;font-weight:600;color:var(--mute);background:#E6E1D3;border-radius:999px;padding:3px 12px;vertical-align:middle;margin-left:8px;letter-spacing:0;text-transform:none}
+.band{background:var(--sage);color:var(--green);font-size:15px;text-align:center;padding:10px 16px}
+.band a{color:var(--green);font-weight:600}
+nav{position:sticky;top:0;z-index:5;background:rgba(238,241,234,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;gap:22px;height:64px}
+nav .logo{font-family:Newsreader,Georgia,serif;font-size:28px;color:var(--ink);text-decoration:none;margin-right:auto}
+nav a.l{color:var(--soft);text-decoration:none;font-size:15px}
+@media(max-width:760px){nav a.l{display:none}}
+.btn{display:inline-block;background:var(--ink);color:var(--paper);text-decoration:none;font-weight:600;border-radius:999px;padding:14px 26px;font-size:17px}
+.btn.o{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+.btn.s{padding:9px 18px;font-size:15px}
+.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:56px;align-items:center}
+@media(max-width:900px){.hero{grid-template-columns:1fr}}
+.phone{width:100%;max-width:340px;justify-self:center;border-radius:36px;border:10px solid var(--ink);background:#F4F1EA;box-shadow:0 30px 60px -30px rgba(20,33,61,.45);display:block}
+ul.clean{padding-left:1.1em;margin:0}
+ul.clean li+li{margin-top:6px}
+.dark-sec{background:var(--ink);color:var(--paper)}
+.dark-sec .eb{color:var(--peach)}
+.dark-sec .card{background:var(--navy2);border-color:#3A4C75;color:#D6DCE8}
+.dark-sec .big{color:var(--sand)}
+.dark-sec .small{color:#C9D3E3}
+.dark-sec .k{color:var(--peach)}
+.quote{font-family:Newsreader,Georgia,serif;font-size:clamp(28px,3.4vw,40px);line-height:1.25;color:var(--sand)}
+.closing{font-family:Newsreader,Georgia,serif;font-size:clamp(30px,4vw,46px);line-height:1.15;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:16px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);border-bottom:2px solid var(--ink)}
+tr.hl{background:var(--sand)}
+.tablewrap{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:8px 12px}
+.shots{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:40px}
+.shots figure{margin:0}.shots img{width:100%;border-radius:22px;border:1px solid var(--line);display:block}
+.shots figcaption{font-size:15px;color:var(--mute);margin-top:10px}
+@media(max-width:760px){.shots{grid-template-columns:1fr}}
+.steps{counter-reset:s;display:grid;gap:16px}
+.steps .card{position:relative;padding-left:72px}
+.steps .card::before{counter-increment:s;content:counter(s);position:absolute;left:24px;top:22px;width:32px;height:32px;border-radius:50%;background:var(--ink);color:var(--paper);font-weight:600;display:flex;align-items:center;justify-content:center;font-size:16px}
+.chart{background:var(--card);border-radius:22px;padding:24px;margin-top:32px}
+.chart svg{width:100%;height:auto;display:block}
+.split{display:grid;gap:56px;align-items:center}.scene{grid-template-columns:1fr auto}.cp{grid-template-columns:auto 1fr;gap:32px}.fd{grid-template-columns:5fr 6fr;gap:64px}.span2{grid-column:span 2}
+@media(max-width:760px){.scene,.cp,.fd{grid-template-columns:1fr}.span2{grid-column:auto}.cp .serif{white-space:normal}.scene>div:last-child{justify-self:center}}
+footer{background:var(--ink);color:#C9D3E3;padding:56px 0;font-size:15px}
+footer a{color:var(--sand)}
+.fn{font-size:14px;color:var(--mute);margin-top:24px;max-width:900px}
+.dark-sec .fn{color:#C9D3E3}
+</style>
+</head>
+<body>
+
+<div class="band">Built at NEAR HACKATHON · Track 03: Privacy &amp; Private AI · November 2026 · <a href="../">Try the live prototype</a></div>
+
+<nav><div class="wrap">
+  <a class="logo" href="#top">Ostrich</a>
+  <a class="l" href="#problem">Problem</a>
+  <a class="l" href="#how">How it works</a>
+  <a class="l" href="#private">Private AI</a>
+  <a class="l" href="#model">Business</a>
+  <a class="l" href="#founder">Founder</a>
+  <a class="btn s" href="../">Try it</a>
+</div></nav>
+
+<!-- 1. Product -->
+<section id="top"><div class="wrap hero">
+  <div class="stack">
+    <p class="eb">Product · the daily look</p>
+    <h1>Ostrich: one number to look at every day.</h1>
+    <p class="lead">A personal finance tool for women (and men) who are struggling with money: when retirement feels hopeless, kids are expensive, and future jobs are uncertain.</p>
+    <div class="grid g3" style="margin-top:28px">
+      <div class="card"><p class="k">Problem</p><p>Sometimes it's so overwhelming, we'd rather not look.</p></div>
+      <div class="card"><p class="k">Solution</p><p>Looking is a habit, like the gym. Seeing it every day helps us stop bad habits over time. Avoiding it is what lets them last.</p></div>
+      <div class="card dark"><p class="k">Ostrich</p><p>One number a day: your net worth, what you own minus what you owe. Secured by private AI, so your secrets stay yours.</p></div>
+    </div>
+    <p style="margin-top:28px"><a class="btn" href="../">Try the live prototype</a> &nbsp; <a class="btn o" href="https://github.com/overachievercat/ostrich">See the code</a></p>
+  </div>
+  <img class="phone" src="img/look.png" alt="The Ostrich daily look on a phone: a made-up member's number, -$15,540, under 'You looked.', with feelings and today's snack">
+</div></section>
+
+<!-- 2. Scene -->
+<section><div class="wrap split scene">
+  <div class="stack">
+    <p class="eb">How it works when she wakes up</p>
+    <p class="serif" style="font-size:clamp(28px,3.4vw,42px);line-height:1.25">It is 7:40 on a Tuesday. Before work, she opens Ostrich for the first time in weeks.</p>
+    <p class="serif" style="font-size:clamp(28px,3.4vw,42px);line-height:1.25">Her number is &#8722;$15,540.</p>
+    <p class="serif" style="font-size:clamp(28px,3.4vw,42px);line-height:1.25">The Ostrich app tells her: you looked, and that was the hardest part.</p>
+    <div class="card dark" style="margin-top:28px"><p style="font-size:21px">When a problem isn't defined, it's very hard to solve. Once it is, there are always ten ways to solve it, especially with AI.</p></div>
+    <p class="small">Sample member: made up, not a real person. Her number is the app's demo data.</p>
+  </div>
+  <div style="background:var(--sand);border-radius:32px;padding:32px" aria-hidden="true">
+    <svg width="220" height="210" viewBox="0 0 84 80"><path d="M2 75 Q42 71 82 75" stroke="#D9B98C" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="56" cy="70" rx="4.2" ry="5" fill="#FBFAF6" stroke="#D9B98C"/><ellipse cx="65.5" cy="70.5" rx="4.2" ry="5" fill="#FBFAF6" stroke="#D9B98C"/><path d="M31 46 L29.5 60 L31.5 73.5 M39 46 L40.5 60 L38.5 73.5" stroke="#14213D" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M17 37 Q14 28 21 27 Q18 32 22 34 Q19 24 26 25 Q22 30 25 33 Z" fill="#FBFAF6" stroke="#14213D" stroke-width="1.2"/><ellipse cx="34" cy="38" rx="16.5" ry="11" fill="#14213D"/><path d="M24 37 Q34 29 45 35 Q37 42 26 41 Z" fill="#FBFAF6"/><path d="M46 37 C51.5 28 51.5 19 48.5 12" stroke="#14213D" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="48.5" cy="10" r="6" fill="#14213D"/><path d="M53 8.6 Q61.5 9.4 62.2 11.4 Q59.6 13.2 53 12.6 Z" fill="#E9A15B"/><circle cx="50" cy="8.6" r="2.3" fill="#F4F1EA"/><circle cx="50.5" cy="8.8" r="1.15" fill="#14213D"/></svg>
+  </div>
+</div></section>
+
+<!-- 19. The main problem -->
+<section id="problem"><div class="wrap">
+  <p class="eb">The main problem: what Ostrich solves every day</p>
+  <h2>You can't change what you don't see.</h2>
+  <p class="lead serif" style="font-size:26px;color:var(--ink)">Researchers call it the ostrich effect. But real ostriches don't bury their heads; they lower them to turn their eggs.</p>
+  <div class="grid g3" style="margin-top:40px">
+    <div class="card"><p class="big">37%</p><p style="margin-top:12px">of Americans aged 18 to 29 avoid thinking about money when they are stressed</p></div>
+    <div class="card"><p class="big">42%</p><p style="margin-top:12px">of ages 18 to 29 live paycheck to paycheck</p></div>
+    <div class="card"><p class="big">$1.263T</p><p style="margin-top:12px">owed on US credit cards at the end of Q2 2026</p></div>
+  </div>
+  <p style="font-size:21px;margin-top:36px;max-width:900px">The numbers are scattered across banks, cards, loans, brokerages and wallets, and looking can feel shameful. So, many people look away. The tools that exist assume she already has money, or knows to go looking.</p>
+  <p class="fn">Sources: Bank of America Better Money Habits 2026 (via InvestmentNews); New York Fed household debt report, Q2 2026.</p>
+</div></section>
+
+<!-- Prototype screens -->
+<section id="how"><div class="wrap">
+  <p class="eb">In the live prototype today</p>
+  <h2>Three numbers, one calm look, and nothing leaves your phone.</h2>
+  <p class="lead">Type cash, what you owe and what you've invested, or read a real NEAR account's balance. See your number with no red or green and no streaks. Every visit ends the same way: <i>You looked.</i></p>
+  <div class="shots">
+    <figure><img src="img/look.png" alt="The daily look with a made-up member's number"><figcaption>The daily look: your number, how you felt before, and how you feel now.</figcaption></figure>
+    <figure><img src="img/snack.png" alt="Today's snack: Your net worth is not your self-worth"><figcaption>Today's snack: one short idea, with a line to keep and its source.</figcaption></figure>
+    <figure><img src="img/sent.png" alt="What was sent? Nothing."><figcaption>What was sent? It shows exactly what left your device. Usually: nothing.</figcaption></figure>
+  </div>
+  <p style="margin-top:36px"><a class="btn" href="../">Try it with made-up numbers</a></p>
+</div></section>
+
+<!-- 3. Impact -->
+<section class="dark-sec"><div class="wrap">
+  <p class="eb">Impact at scale</p>
+  <h2>What one calm look a day adds up to.</h2>
+  <div class="grid g3" style="margin-top:40px">
+    <div class="card"><p class="big">$214B</p><p style="margin-top:12px">Members' net worth by 2056 if 1 in 4 of the 54.8M members we forecast save like her, in today's US dollars.</p></div>
+    <div class="card"><p class="big">$42k</p><p style="margin-top:12px">Her net worth after 30 years with Ostrich, saving $63 a month on a $15,080 minimum-wage salary and keeping Medicaid. The same $63 a month saved without investing: $22,620.</p></div>
+    <div class="card"><p class="big">5.5M</p><p style="margin-top:12px">People new to crypto and onchain savings, like NEAR, if 1 in 10 members try the savings ladder, with every risk said plainly.</p></div>
+  </div>
+  <p class="fn">Sample member: made up, not a real person. A scenario, not a promise; today's dollars; middle case. Ostrich never holds or moves this money and earns nothing from it. Not financial advice.</p>
+</div></section>
+
+<!-- 4. Retirement -->
+<section style="background:var(--sand)"><div class="wrap" style="text-align:center">
+  <p class="eb">Retirement</p>
+  <h2 style="max-width:980px;margin:0 auto">Ostrich lets people, even on minimum wage, picture a retirement where she can afford the basics.</h2>
+  <div class="chart" style="max-width:900px;margin:36px auto 0">
+    <p class="serif" style="font-size:26px;margin-bottom:12px">On minimum wage, from $0: about $42,000 in today's dollars</p>
+    <svg viewBox="0 0 900 450" role="img" aria-label="Net worth of one sample member, 2027 to 2056. Saving only reaches $22,620. Three thirds reach about $42,000 in the middle case, with a range from about $29,000 to $60,000.">
+<line x1="80" y1="400" x2="860" y2="400" stroke="#CBD2C6" stroke-width="2"></line>
+<line x1="80" y1="220" x2="860" y2="220" stroke="#DDE2D8" stroke-width="1"></line>
+<line x1="80" y1="40" x2="860" y2="40" stroke="#DDE2D8" stroke-width="1"></line>
+<text x="0" y="408" font-size="22" fill="#4A5568" font-family="Inter, Arial, sans-serif">$0</text>
+<text x="0" y="228" font-size="22" fill="#4A5568" font-family="Inter, Arial, sans-serif">$30k</text>
+<text x="0" y="48" font-size="22" fill="#4A5568" font-family="Inter, Arial, sans-serif">$60k</text>
+<polygon points="80.0,395.5 106.9,391.0 133.8,386.2 160.7,381.2 187.6,375.8 214.5,370.1 241.4,364.1 268.3,357.6 295.2,350.7 322.1,343.4 349.0,335.6 375.9,327.2 402.8,318.4 429.7,308.9 456.6,298.9 483.4,288.2 510.3,276.8 537.2,264.6 564.1,251.7 591.0,237.9 617.9,223.2 644.8,207.6 671.7,191.0 698.6,173.3 725.5,154.4 752.4,134.3 779.3,112.9 806.2,90.1 833.1,65.8 860.0,39.9 860.0,226.4 833.1,234.4 806.2,242.2 779.3,249.8 752.4,257.3 725.5,264.6 698.6,271.8 671.7,278.8 644.8,285.7 617.9,292.4 591.0,299.0 564.1,305.4 537.2,311.7 510.3,317.9 483.4,324.0 456.6,329.9 429.7,335.7 402.8,341.3 375.9,346.9 349.0,352.3 322.1,357.6 295.2,356.7 268.3,361.9 241.4,367.0 214.5,372.0 187.6,376.9 160.7,381.7 133.8,386.4 106.9,391.0 80.0,395.5" fill="#F2B880" opacity="0.45"></polygon>
+<polyline points="80.0,395.5 106.9,391.0 133.8,386.4 160.7,381.9 187.6,377.4 214.5,372.9 241.4,368.3 268.3,363.8 295.2,359.3 322.1,354.8 349.0,350.2 375.9,345.7 402.8,341.2 429.7,336.7 456.6,332.1 483.4,327.6 510.3,323.1 537.2,318.6 564.1,314.0 591.0,309.5 617.9,305.0 644.8,300.5 671.7,295.9 698.6,291.4 725.5,286.9 752.4,282.4 779.3,277.9 806.2,273.3 833.1,268.8 860.0,264.3" fill="none" stroke="#6B7280" stroke-width="3" stroke-dasharray="8 8"></polyline>
+<polyline points="80.0,395.5 106.9,391.0 133.8,386.3 160.7,381.4 187.6,376.3 214.5,371.0 241.4,365.5 268.3,359.6 295.2,353.6 322.1,347.2 349.0,340.6 375.9,337.4 402.8,330.3 429.7,322.9 456.6,315.2 483.4,307.1 510.3,298.7 537.2,289.9 564.1,280.7 591.0,271.0 617.9,261.0 644.8,250.5 671.7,239.5 698.6,228.0 725.5,216.0 752.4,203.5 779.3,190.4 806.2,176.7 833.1,162.4 860.0,147.5" fill="none" stroke="#14213D" stroke-width="5"></polyline>
+<text x="80" y="440" font-size="22" fill="#4A5568" font-family="Inter, Arial, sans-serif">2027</text>
+<text x="800" y="440" font-size="22" fill="#4A5568" font-family="Inter, Arial, sans-serif">2056</text>
+<text x="700" y="117" font-size="24" font-weight="600" fill="#14213D" font-family="Inter, Arial, sans-serif">$42,091</text>
+<text x="700" y="304" font-size="22" fill="#4A5568" font-family="Inter, Arial, sans-serif">$22,620 saved</text>
+    </svg>
+    <p class="small" style="margin-top:10px">Solid line: middle case, a third each in an S&amp;P 500 fund, stablecoin DeFi and a REIT fund. Shaded: low and high cases. Dashed: saved without investing.</p>
+  </div>
+  <p class="fn" style="margin:24px auto 0">Sample member, made up, not a real person. Returns after inflation are assumptions (S&amp;P 500 5%, DeFi 4%, REIT 4.5%), below 1972 to 2025 history; DeFi at 4% is the optimistic part. With card debt, paying it off comes first; she starts at $0. Not financial advice.</p>
+</div></section>
+
+<!-- 5. Retirement within reach -->
+<section><div class="wrap">
+  <p class="eb">When is retirement within reach?</p>
+  <h2>If she keeps going from 21 to 71: her future paycheck beats her pay, but not yet her costs.</h2>
+  <div class="grid g3" style="margin-top:36px">
+    <div class="card"><p class="k">Pay while working</p><p class="big" style="font-size:48px">$15,080</p><p class="small" style="margin-top:8px">a year</p></div>
+    <div class="card"><p class="k">Future paycheck at 71</p><p class="big" style="font-size:48px">$21,700</p><p class="small" style="margin-top:8px">Social Security from 70: about $16,800; savings at 3.9%: about $4,800 (rounded)</p></div>
+    <div class="card sand"><p class="k">Basic costs, older adult living alone</p><p class="big" style="font-size:48px">$34,000</p><p class="small" style="margin-top:8px">a year (Elder Index)</p></div>
+  </div>
+  <div class="grid g3" style="margin-top:20px">
+    <div class="card"><h3>Replaces her pay: 144%</h3><p>Passes. Even at 83% of benefits after 2034, about $18,800.</p></div>
+    <div class="card"><h3>Keeps her standard of living</h3><p>Likely, since Social Security is most of her income.</p></div>
+    <div class="card dark"><h3 style="color:var(--peach)">Covers basic costs: 64%</h3><p>Short about $12,300 a year. Rent and place matter most.</p></div>
+  </div>
+  <p style="font-size:21px;margin-top:32px"><b>The biggest lever is when she claims:</b> Social Security at 70 pays about 77% more a month than at 62.</p>
+  <p class="fn">Sample member, made up, not a real person, today's dollars, rough estimates. Sources: SSA benefit formula; 2026 Trustees (CRS); Morningstar 2026 (3.9%); Elder Index 2025, UMass Boston; CRR Boston College. Not financial advice.</p>
+</div></section>
+
+<!-- 6. Closing the gap -->
+<section><div class="wrap">
+  <p class="eb">Closing the gap</p>
+  <h2>Four levers that get her future paycheck to basic costs.</h2>
+  <div class="tablewrap" style="margin-top:32px"><table>
+    <tr><th>What changes (Social Security claimed at 70 in every row)</th><th>Future paycheck a year</th><th>Covers $34,000 basic costs</th></tr>
+    <tr><td>Today's plan: $7.25 an hour, saves 5%</td><td>$21,700</td><td>64%</td></tr>
+    <tr><td>1. Save 10% instead of 5%</td><td>$26,500</td><td>78%</td></tr>
+    <tr><td>2. Save 6%, take a 50% employer match and the new federal Saver's Match (from 2027)</td><td>$28,400</td><td>84%</td></tr>
+    <tr><td>3. Earn $15 an hour, as many state minimums do, and save 5%</td><td>$33,900</td><td>100%</td></tr>
+    <tr class="hl"><td>4. Own a home outright by 70: basic costs fall to about $25,200</td><td>$28,400 with lever 2</td><td>113% of the lower costs</td></tr>
+  </table></div>
+  <div class="grid g2" style="margin-top:20px">
+    <div class="card"><p class="k">Inflation is already counted</p><p>$21,700 means $21,700 of today's buying power. In 2076 prices, at 2.5% inflation a year, that's about $74,000, and $34,000 of basic costs becomes about $117,000. Social Security rises with prices every year by law (2.8% in 2026).</p></div>
+    <div class="card dark"><p class="k">How daily snacks pull these levers <span class="tag">Planned</span></p><p><b style="color:var(--sand)">Wage matters most.</b> Job snacks build the habit of applying while she still works, one small step a day, until $7.25 becomes $15. In a randomized trial, writing a job-search plan raised job offers about 30%.</p><p><b style="color:var(--sand)">Housing is next.</b> Owning a home outright cuts basic costs by about a quarter. <b style="color:var(--sand)">Saver's Match</b> is free federal money many won't know they qualify for.</p></div>
+  </div>
+  <p class="fn">Sample member, made up, not a real person, rough estimates. Sources: SSA formula; SECURE 2.0 Saver's Match; Elder Index, UMass Boston; SSA 2026 COLA; Faberman, Mueller, Şahin and Topa (Econometrica); Abel and others (AEJ Applied, 2019). Not financial advice.</p>
+</div></section>
+
+<!-- 7. Why it works -->
+<section><div class="wrap">
+  <p class="eb">Why it works</p>
+  <h2>One goal, her net worth going up, and two advantages that grow with every member.</h2>
+  <div class="grid g2" style="margin-top:36px">
+    <div class="card"><p class="k">A reason to trust us</p><h3>We never earn from what lowers her net worth.</h3><p>No cash advances, payday-style loans or card offers. Other money apps can't easily say that, because those are their revenue.</p></div>
+    <div class="card"><p class="k">A reason membership gets better <span class="tag">Planned</span></p><h3>It gets smarter as more people try more things.</h3><p>Members see what happened to people like them, and nobody can pay to be listed. The advantage grows with every member.</p></div>
+  </div>
+  <div class="card dark split cp" style="margin-top:20px">
+    <p class="serif" style="font-size:36px;color:var(--peach)">ClassPass for wealth management</p>
+    <p>One membership fee gives members access to financial services, the way ClassPass opens gyms and yoga studios. Ostrich keeps 13%; the rest pays the partners who help her. Nobody pays to be listed.</p>
+  </div>
+  <p class="fn">Membership partners are Planned. Sharing results is opt-in, totals only and anonymous. Not financial advice.</p>
+</div></section>
+
+<!-- 8–10. Three problems -->
+<section id="why"><div class="wrap">
+  <p class="eb">Why I made this</p>
+  <h2>I made this because my life is already complicated enough.</h2>
+  <div class="grid g2" style="margin-top:36px;align-items:start">
+    <ul class="clean" style="font-size:19px"><li>Angel investments on Carta and other dashboards</li><li>A mortgage and rental income</li><li>Several LLCs, each with its own bank accounts</li><li>Stock options from a past job, a 401(k) and an IRA</li><li>Medicaid, with income limits to keep</li><li>20 crypto wallets and 50 DeFi and liquidity positions, some rolled up in vfat where even the wallet can't see them</li><li>On top of everyday bank accounts and credit cards</li></ul>
+    <div class="stack" style="margin:0">
+      <div class="card"><p class="k">Problem</p><p>Ask me my net worth today, and finding the numbers feels as painful as the tax filing I do once a year.</p></div>
+      <div class="card"><p class="k">Solution</p><p>Integrations that read and never write. Not writing protects the assets; reading gives me visibility, control and insight to improve my habits.</p></div>
+      <div class="card dark"><p class="k">Ostrich</p><p>Plaid and others already move the data, so Ostrich isn't the pipeline or the aggregator. Ostrich's one job stays the same: help you focus on your one number, and let you decide how to move it up.</p></div>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <p class="eb">The second problem</p>
+  <h2>Privacy: money is the thing we least want anyone to see.</h2>
+  <div class="grid g2" style="margin-top:36px;align-items:start">
+    <ul class="clean" style="font-size:19px"><li>Sharing those seven lines about myself raises my hair and gives me a small panic.</li><li>I'm scared someone could steal my money if I tell them, or find out some other way.</li><li>Talking about money isn't natural. I don't ask friends their salaries, and even my crypto friends stay vague about their gains.</li><li>Arguments about money are one of the strongest predictors of divorce, even between people meant to share a life (Dew, Britt and Huston, 2012).</li><li>Neither my parents nor my school taught me how to grow my net worth or climb out of rock bottom.</li></ul>
+    <div class="stack" style="margin:0">
+      <div class="card"><p class="k">Problem</p><p>Privacy is a historical and social problem, not only a technical one. The default answer is to pretend it isn't there: cover your eyes, or make it so messy that even people give up looking.</p></div>
+      <div class="card"><p class="k">Solution</p><p>Private AI. That's why Ostrich is at the NEAR hackathon.</p></div>
+      <div class="card dark"><p class="k">Ostrich</p><p>Privacy for millions, even billions, of "regular Marys" who are far from cybersecurity and wouldn't know they need it, yet practise it every time they don't talk about money.</p></div>
+    </div>
+  </div>
+  <p class="closing">This is why private AI is so helpful, and so exciting, for personal finance.</p>
+</div></section>
+
+<section><div class="wrap">
+  <p class="eb">The third problem</p>
+  <h2>Most financial tools are priced for people who already have money.</h2>
+  <div class="grid g2" style="margin-top:36px;align-items:start">
+    <ul class="clean" style="font-size:19px"><li>The top 1% (or 10%) has family offices, wealth advisers, estate lawyers, private funds, private credit, angel deals, tax strategies, and dashboards like Monarch, Kubera and Empower.</li><li>"Regular Mary" is told to hold the S&amp;P 500; if she's sophisticated, Bitcoin and a rental property too.</li><li>Everyone else is barely staying afloat, paycheck to paycheck, with no room to move for a better job.</li><li>Some families can't afford a funeral, and neither can the people they leave behind.</li></ul>
+    <div class="stack" style="margin:0">
+      <div class="card"><p class="k">Problem</p><p>Walk into a wealth manager's office and you feel you're in the wrong place: not enough zeros, not a serious customer. They won't work with negative net worth.</p></div>
+      <div class="card"><p class="k">Solution</p><p>The 1%'s playbook is on the internet, and now in AI. The new problem is unknown unknowns: you can't search for what you don't know exists.</p></div>
+      <div class="card dark"><p class="k">Ostrich</p><p>The daily look, plus a snack, a short daily suggestion that might raise your net worth; and Ostrich TV (planned), talks on growing net worth by guest speakers.</p></div>
+    </div>
+  </div>
+  <p class="closing">Ostrich is for the 99%.</p>
+</div></section>
+
+<!-- 11. Endings + 18. Momentum -->
+<section><div class="wrap">
+  <p class="eb">User journey: designing the ending to each session with closure, empowerment, calmness, and hope</p>
+  <h2>How every visit ends: on her action, then the refrain.</h2>
+  <div class="tablewrap" style="margin-top:32px"><table>
+    <tr><th>Visit</th><th>Its question</th><th>How it ends</th></tr>
+    <tr><td><b>Daily look</b></td><td>Where am I?</td><td>"You looked." The refrain.</td></tr>
+    <tr><td><b>Snack</b></td><td>Why does this happen?</td><td>Her own small step, in her words</td></tr>
+    <tr><td><b>Ostrich TV lesson</b> <span class="tag">Planned</span></td><td>What did someone else do?</td><td>A line to keep, then a stopping point</td></tr>
+    <tr><td><b>Year</b> <span class="tag">Planned</span></td><td>Who was I this year?</td><td>The book of her year, in her words</td></tr>
+  </table></div>
+  <div class="grid g2" style="margin-top:20px">
+    <div class="card"><p class="k">Protect the refrain</p><p>"You looked." never changes. Nothing added, never varied to keep it fresh, and nothing after it except a quiet fresh-start line on a landmark she chose.</p></div>
+    <div class="card dark"><p class="k">Cut</p><p>Anything shaped like "coming up next", a progress bar at the end of a visit, "2 lessons away from…", a notification teasing the next reading.</p></div>
+  </div>
+  <p class="fn">People remember an experience mostly by its peak and its end (Kahneman and colleagues, 1993). Cliffhangers buy less than they seem: a 2025 meta-analysis found no general memory advantage for unfinished tasks.</p>
+
+  <p class="eb" style="margin-top:72px">User journey design: Ostrich helps her tell her own story about money <span class="tag">Planned</span></p>
+  <h2>Momentum without hooks: fresh starts, small wins, good endings.</h2>
+  <div class="grid g2" style="margin-top:32px">
+    <div class="card"><p class="k">Fresh starts</p><p class="serif" style="font-size:28px">"A fresh start, if you want one."</p><p>She picks her landmarks: her birthday, the new year, a change she reports. She names the new chapter herself; the last one stays as it was.</p><p class="small">People start goals more often at landmarks like these (Dai, Milkman and Riis, Management Science, 2014).</p></div>
+    <div class="card"><p class="k">Small wins</p><p class="serif" style="font-size:28px">"I called about the late fee."</p><p>One optional check-in question: anything she did for her money, however small. Her words stay on her phone and never reach the AI.</p><p class="small">Visible progress was the biggest daily motivator in about 12,000 work diary entries (Amabile and Kramer, 2011). The quoted win is from the sample member: made up.</p></div>
+  </div>
+  <div class="card dark" style="margin-top:20px"><p style="font-size:20px"><b style="color:var(--peach)">Never:</b> streaks, counts, scores, cliffhangers, countdowns or reminders. Every visit still ends on "You looked."</p></div>
+</div></section>
+
+<!-- 12. Architecture -->
+<section id="private" class="dark-sec"><div class="wrap">
+  <p class="eb">Technology architecture</p>
+  <h2>How every account becomes one number, privately.</h2>
+  <div class="grid g4" style="margin-top:36px">
+    <div class="card"><p class="k">Where money lives</p><p>Banks, cards and loans (Plaid); Ethereum-style wallets (Zerion); NEAR accounts (public NEAR RPC); and anything typed in by hand.</p></div>
+    <div class="card"><p class="k">Ostrich server</p><p>Server routes hold the keys, never the browser. Stores nothing: balances pass through.</p></div>
+    <div class="card" style="background:#2A4A3A;border-color:#4F6F5A"><p class="k" style="color:var(--sand)">On her device</p><p>One format for every source. Net worth = assets minus debts. A daily snapshot. Feelings, notes and story never leave. No Ostrich database, no login.</p></div>
+    <div class="card"><p class="k">Private AI</p><p>NEAR AI Cloud runs in a trusted execution environment. It gets totals only and returns one calm sentence.</p></div>
+  </div>
+  <p class="fn">This is the planned build. The live prototype runs the on-device part today, plus a real read-only NEAR account read. The bank connections and private AI are concept screens. Plaid and Zerion see the accounts or addresses they serve; wallet addresses are public onchain.</p>
+</div></section>
+
+<!-- 13. NEAR ecosystem -->
+<section><div class="wrap">
+  <p class="eb">Technology · The NEAR ecosystem <span class="tag">Planned</span></p>
+  <h2>Seven of the 17 hackathon ecosystem projects help Ostrich read and reason privately.</h2>
+  <div class="grid g4" style="margin-top:36px">
+    <div class="card"><h3>NEAR AI Cloud</h3><p>Private AI in Intel TDX and NVIDIA GPU enclaves. For Ostrich: the daily sentence, with proof she can check and a signed reply.</p></div>
+    <div class="card"><h3>OutLayer</h3><p>Code runs in a TDX enclave; each result is attested to the exact code and inputs. For Ostrich: add up totals with keys sealed inside.</p></div>
+    <div class="card"><h3>HOT Kit, from HOT</h3><p>Connects wallets on NEAR, EVM, Solana, TON, Stellar, TRON and Cosmos, and reads balances. For Ostrich: one connect button, read only.</p></div>
+    <div class="card"><h3>NEAR Intents</h3><p>Cross-chain swaps; balances held in a verifier contract; a token list with USD prices. For Ostrich: prices (used today), and Intents balances in the number.</p></div>
+    <div class="card"><h3>Aurora</h3><p>An Ethereum-style chain that runs on NEAR. For Ostrich: Aurora wallets join the Ethereum-style connector.</p></div>
+    <div class="card"><h3>Rhea</h3><p>NEAR trading and lending, from Ref and Burrow. For Ostrich: deposits count as assets, and loans as debts.</p></div>
+    <div class="card"><h3>HEX</h3><p>HOT's exchange, built on HOT Bridge and NEAR Intents. For Ostrich: HOT Omni balances counted; swaps stay in HEX.</p></div>
+    <div class="card dark"><p class="k">The rule for all 17</p><p>Read, never move money. Ostrich uses only the reading part of each; swaps, bridges and signing stay off.</p></div>
+  </div>
+  <p class="fn">From each project's docs and GitHub where reachable, Nov 8, 2026. All connections Planned, except the NEAR Intents price list, which the prototype uses today.</p>
+</div></section>
+
+<!-- 14. Open source -->
+<section><div class="wrap">
+  <p class="eb">Technology · Open source for crypto and DeFi <span class="tag">Planned</span></p>
+  <h2>Open tools let Ostrich read Aave, Morpho and any wallet straight from the source.</h2>
+  <div class="grid g4" style="margin-top:36px">
+    <div class="card"><h3>Aave</h3><p>AaveKit GraphQL API, plus the Pool contract's account data: collateral, debt and health factor. For Ostrich: Aave loans count as debts.</p></div>
+    <div class="card"><h3>Morpho</h3><p>Public REST API for vault and market positions and APY. For Ostrich: vault savings in the number.</p></div>
+    <div class="card"><h3>MetaMask Connect</h3><p>Replaces the now-deprecated MetaMask SDK. For Ostrich: share an address to read. Never ask for a signature.</p></div>
+    <div class="card"><h3>viem (MIT)</h3><p>Read-only contract calls and batched reads, with no wallet and no gas. For Ostrich: read balances and loans straight from the chain.</p></div>
+    <div class="card"><h3>DefiLlama</h3><p>Open-source adapters and a free API for yields, borrow rates and TVL. For Ostrich: neutral rates on DeFi rungs.</p></div>
+    <div class="card"><h3>Revoke.cash (MIT)</h3><p>Shows which apps can spend a wallet's tokens. For Ostrich: list approvals in plain words and link out. Ostrich never revokes for her.</p></div>
+    <div class="card"><h3>rotki</h3><p>Local-first crypto tracker: read-only keys, data in an encrypted local database. For Ostrich: a model to follow.</p></div>
+    <div class="card"><h3>OpenZeppelin Contracts (MIT)</h3><p>The most-used audited library for smart contracts. Only if Ostrich ever writes a contract.</p></div>
+    <div class="card"><h3>Safe Smart Account (LGPL-3.0)</h3><p>The multisig behind many Ethereum treasuries. An option for the donor fund, next to NEAR Business, Trezu and SputnikDAO.</p></div>
+    <div class="card"><h3>Ghostfolio (AGPL-3.0)</h3><p>Open-source wealth tracker. Learn from it, don't copy code: AGPL would require sharing Ostrich's source.</p></div>
+    <div class="card dark span2"><p class="k">Same rule</p><p>Read, never move money. Each tool is used only for reading; anything that signs or sends stays off.</p></div>
+  </div>
+  <p class="fn">From each project's docs and GitHub, Nov 8, 2026. APIs are free to read today; terms can change. Not legal advice; check licenses with a lawyer before shipping.</p>
+</div></section>
+
+<!-- 15. Architecture with ecosystem -->
+<section><div class="wrap">
+  <p class="eb">Technology architecture, with the ecosystem <span class="tag">Planned</span></p>
+  <h2>Read everything, add it up in a sealed box, and let her check the proof.</h2>
+  <div class="steps" style="margin-top:36px">
+    <div class="card"><h3>Read, never sign</h3><p>Plaid for banks, cards and loans; HOT Kit and FastNEAR RPC for wallets on many chains; Aurora by Ethereum RPC; Rhea deposits and loans; NEAR Intents balances. Mortgage and BNPL typed in, staying on the device.</p></div>
+    <div class="card"><h3>Add up, sealed</h3><p>An OutLayer enclave keeps bank and wallet keys sealed inside, adds up assets and debts, and gives proof of the exact code that ran. Prices from the NEAR Intents token list and a TEE price oracle.</p></div>
+    <div class="card" style="background:var(--sage);border-color:#4F6F5A"><h3>On her device</h3><p>The daily snapshot and things with a date. Feelings and story never leave.</p></div>
+    <div class="card"><h3>Private AI</h3><p>NEAR AI Cloud gets totals only, with proof of sealed hardware and a signed one-sentence reply. At login: one number, one sentence, and a Verify line.</p></div>
+  </div>
+  <div class="card sand" style="margin-top:20px"><p><b>Later, a way to give:</b> anyone (a person, a foundation, a company) can pay for a membership for someone who can't afford one. Ostrich keeps none of it; all of it pays the partners who help her. The money waits in a shared wallet donors can check, and nothing leaves without several people approving (NEAR Business, Trezu or SputnikDAO). Not Ostrich revenue, and never members' own money.</p></div>
+</div></section>
+
+<!-- 16. Research -->
+<section><div class="wrap">
+  <p class="eb">Product design: what research says about how Ostrich is designed</p>
+  <h2>One view helps, proof builds trust, hype hurts.</h2>
+  <div class="tablewrap" style="margin-top:32px"><table>
+    <tr><th style="width:20%">Connection</th><th style="width:52%">Research</th><th>What changes for her</th></tr>
+    <tr><td><b>One view of every account</b></td><td>In Iceland, after an aggregator app launched, bank overdraft (NSF) fees fell 14% in a year and 38% in two, with no alerts (Carlin, Olafsson and Pagel, Review of Finance 2023).</td><td>More chains in one calm number. Still no alerts.</td></tr>
+    <tr><td><b>Same app, the ostrich effect</b></td><td>People logged in less when overdrawn and more on payday; one more login a month went with about 17% less consumer debt (Olafsson and Pagel, NBER).</td><td>A negative number gets the same calm screen. A link, not proof.</td></tr>
+    <tr><td><b>Proof of privacy</b></td><td>When privacy ratings were shown clearly, 47% bought from high-privacy sites versus 6%, and paid about 59 cents more (Tsai, Egelman, Cranor and Acquisti, Carnegie Mellon, 2011).</td><td>A plain "Verified private" line she can tap.</td></tr>
+    <tr><td><b>Memecoins and mining rewards</b></td><td>Lottery-like stocks draw lower-income investors, who earn 2 to 3% less a year (Kumar, 2009). Attention-driven app trading predicted -4.7% returns in 20 days (Barber and others, 2022).</td><td>Counted, never promoted. No buy buttons, no streaks.</td></tr>
+    <tr><td><b>A donor treasury</b></td><td>When donors were told overhead was covered, donations rose about 75% versus seed money (Gneezy, Keenan and Gneezy, Science 2014).</td><td>100% to partners, in a treasury donors can audit. Members stay private.</td></tr>
+  </table></div>
+  <p class="fn">Journal of Finance (Kumar 2009; Barber, Huang, Odean and Schwarz 2022); Information Systems Research (Tsai and others 2011).</p>
+</div></section>
+
+<!-- 20 + 21. Business model -->
+<section id="model"><div class="wrap">
+  <p class="eb">Business model · 50 years</p>
+  <h2>A business model for 50 years: $116M of revenue a year by 2076, while members' net worth grows to about $876B.</h2>
+  <p class="lead">Ostrich never touches or manages that money. But that many members, growing their net worth together, is a strong voice when negotiating with fintech partners for better terms that help them grow it faster.</p>
+  <div class="grid g4" style="margin-top:36px">
+    <div class="card"><p class="k">All members</p><p class="big" style="font-size:44px">81.4M</p><p class="small">by 2076 (54.8M in 2056). Range: 41M to 163M. Most stay free: the daily look is free forever.</p></div>
+    <div class="card"><p class="k">Paid members</p><p class="big" style="font-size:44px">7.0M</p><p class="small">by 2076 (4.7M in 2056). Plus or Pro, Ostrich TV, or a seat from her employer. About 1 in 11.</p></div>
+    <div class="card"><p class="k">Ostrich revenue a year</p><p class="big" style="font-size:44px">$116M</p><p class="small">by 2076 ($78M in 2056). Range: $58M to $231M. Employers, memberships, group deals and partners.</p></div>
+    <div class="card"><p class="k">Savers' net worth</p><p class="big" style="font-size:44px">$876B</p><p class="small">by 2076 ($214B in 2056). The 1 in 4 members who save like the sample member. It stays theirs.</p></div>
+  </div>
+  <p class="fn">Sample member: made up, not a real person. A scenario, not a promise. Base case; ranges are low and high cases. After 2056 everything grows 2% a year, an assumption. Today's dollars.</p>
+
+  <p class="eb" style="margin-top:72px">Global expansion · A 100-year plan</p>
+  <h2>$16.2T of net worth for 3.4B members, including the poorest people on earth, with $546.7M of operating income on $2.9B of revenue in 2126.</h2>
+  <div class="tablewrap" style="margin-top:32px"><table>
+    <tr><th>Year</th><th>Members</th><th>Paid members&#8224;</th><th>Member-owners</th><th>Revenue</th><th>Costs</th><th>Operating income</th><th>Members' net worth*</th></tr>
+    <tr><td>2036</td><td>16.5M</td><td>1.2M</td><td>0.09M</td><td>$25M</td><td>$26M</td><td>&#8722;$0.8M</td><td>$10B</td></tr>
+    <tr><td>2056</td><td>271M</td><td>15.2M</td><td>6.8M</td><td>$238M</td><td>$191M</td><td>$47.0M</td><td>$0.7T</td></tr>
+    <tr><td>2076</td><td>776M</td><td>38.2M</td><td>19.7M</td><td>$661M</td><td>$536M</td><td>$124.7M</td><td>$3.9T</td></tr>
+    <tr><td>2086</td><td>1.04B</td><td>51.3M</td><td>30.1M</td><td>$888M</td><td>$721M</td><td>$167.6M</td><td>$7.2T</td></tr>
+    <tr><td>2096</td><td>1.40B</td><td>68.9M</td><td>42.6M</td><td>$1.19B</td><td>$968M</td><td>$225.2M</td><td>$8.9T</td></tr>
+    <tr><td>2106</td><td>1.88B</td><td>92.7M</td><td>58.6M</td><td>$1.60B</td><td>$1.30B</td><td>$302.7M</td><td>$10.6T</td></tr>
+    <tr><td>2116</td><td>2.53B</td><td>124.5M</td><td>79.5M</td><td>$2.16B</td><td>$1.75B</td><td>$406.8M</td><td>$13.9T</td></tr>
+    <tr class="hl"><td>2126</td><td>3.40B</td><td>167.4M</td><td>107.4M</td><td>$2.90B</td><td>$2.35B</td><td>$546.7M</td><td>$16.2T</td></tr>
+  </table></div>
+  <p style="margin-top:20px">Base case for comparison, 2126: 219M members, $311M revenue, $44.5M operating income, $1.13T members' net worth. Over 100 years the roadmap brings about $87.7B of revenue and $16.1B of operating income.</p>
+  <p class="fn">&#8224; Plus, TV and group deals; Feathers members are counted apart (284M in 2126). * Includes the zero-interest fund and Feathers savings; each member counted for at most 50 years. To 2076 from the forecast, then 3% a year. Today's dollars; every number is an assumption.</p>
+</div></section>
+
+<!-- 17. Sponsor kit -->
+<section><div class="wrap">
+  <p class="eb">Just fantasizing: if Ostrich becomes a hackathon sponsor</p>
+  <h2>The Ostrich Calm Kit: everything a team needs to build kind, private money tools in a weekend.</h2>
+  <div class="grid g3" style="margin-top:36px">
+    <div class="card"><h3>1. Calm screen components</h3><p>Open-source React pieces: number first, Hide amounts, a quiet status line, no red, and a negative number that looks as calm as a positive one.</p></div>
+    <div class="card"><h3>2. Demo households</h3><p>Twelve made-up people, from -$15,540 to a minimum-wage saver, as JSON. Builders never need anyone's real data.</p></div>
+    <div class="card"><h3>3. Read-only connector kit</h3><p>The Connector SDK with examples for NEAR and Ethereum wallets. Nothing in it can sign or send.</p></div>
+    <div class="card"><h3>4. Totals-only private AI</h3><p>One function that sends only totals to NEAR AI Cloud and returns the sentence plus a "What was sent" record.</p></div>
+    <div class="card"><h3>5. Research registry as data</h3><p>Every finding with its source and evidence label, as open JSON, plus the snack format.</p></div>
+    <div class="card"><h3>6. Four prize tracks</h3><p>A calm screen for a negative number; a read-only connector; a research-backed snack; a privacy proof members can check.</p></div>
+  </div>
+  <div class="card dark" style="margin-top:20px"><p class="k">After the weekend</p><p>Finalists who keep shipping get mentoring and a small "keep building" grant at 30 and 90 days, and reviewed work can appear in Ostrich with credit.</p></div>
+  <p class="fn">Judging would include the Ostrich rules: no real member data, read only, totals only to AI, sources cited. All Planned.</p>
+</div></section>
+
+<!-- 22. Founder -->
+<section id="founder" class="dark-sec"><div class="wrap split fd">
+  <div class="stack">
+    <p class="eb">Founder of Ostrich</p>
+    <h2 style="font-size:clamp(44px,6vw,72px)">Nadia Choi</h2>
+    <p style="font-size:21px;color:#D6DCE8">Solo hackathon team. A transgender woman in NYC.</p>
+    <ul class="clean" style="color:#D6DCE8"><li>ETHGlobal, 2026 and 2025</li><li>Coinbase monetized MCP, 2025</li></ul>
+    <p style="border-top:1px solid #3A4C75;padding-top:20px"><a href="https://github.com/overachievercat/ostrich" style="color:var(--peach)">github.com/overachievercat/ostrich</a><br><a href="../" style="color:var(--peach)">Live prototype</a></p>
+  </div>
+  <div class="stack">
+    <p class="quote">I hit rock bottom, and kept on digging even further below.</p>
+    <p class="quote">I felt shame at rock bottom, and hid from friends and family.</p>
+    <p class="quote">I got a pot belly during COVID, and was surprised the day I finally noticed.</p>
+    <p class="quote">&#8230;and I built Ostrich for myself and women like me around the world, so that we don't have to struggle alone.</p>
+  </div>
+</div></section>
+
+<footer><div class="wrap stack">
+  <p class="serif" style="font-size:30px;color:var(--paper)">Ostrich never sells her data, never lends to her and never shows her offers.</p>
+  <p>Built solo at NEAR HACKATHON, November 2026, written with Claude Code. Every sample member on this page is made up, not a real person. Every forecast is a scenario, not a promise, in today's dollars. Anything marked Planned is designed, not built. Not financial advice.</p>
+  <p><a href="../">Try the live prototype</a> · <a href="https://github.com/overachievercat/ostrich">Code on GitHub</a> · MIT licence</p>
+</div></footer>
+
+</body>
+</html>
