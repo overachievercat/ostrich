@@ -269,6 +269,7 @@
     <div id="trendWrap" hidden>
       <p class="section" id="trendTitle">Your number over time</p>
       <div class="card chart" id="chart" style="margin-top:0"></div>
+      <p class="fine" id="trendNote" style="text-align:left;margin-top:8px" hidden>Made up, for illustration: this pretends you looked most days for six months, ending at today's number. It isn't saved and isn't in Your looks. Your own line appears after your third look.</p>
     </div>
 
     <p class="section">Your looks</p>
@@ -535,8 +536,12 @@
 
   // One line, your number over time. Navy on cream; no red or green.
   function drawChart(list){
-    var wrap = $('trendWrap'), box = $('chart');
-    if (list.length < 3){ wrap.hidden = true; return; }
+    var wrap = $('trendWrap'), box = $('chart'), example = false;
+    if (list.length < 3){
+      if (!list.length || list[0].sample){ wrap.hidden = true; $('trendNote').hidden = true; return; }
+      list = exampleLine(list[list.length-1]); example = true;
+    }
+    $('trendNote').hidden = !example;
     wrap.hidden = false; box.innerHTML = '';
     var W = 340, H = 160, L = 8, R = 8, T = 14, B = 26;
     var vals = list.map(function(x){ return x.cash + x.invest - x.owe; });
@@ -579,13 +584,29 @@
     hit.addEventListener('pointermove', at); hit.addEventListener('pointerdown', at);
     hit.addEventListener('pointerleave', off); hit.addEventListener('pointercancel', off);
     var since = last - first;
-    $('trendTitle').textContent = 'Your number since ' + niceDate(list[0].date).replace(/^\w+, /,'') + (list[0].sample ? ' (made up)' : '');
+    $('trendTitle').textContent = example ? 'Example: your line after six months of looks' : 'Your number since ' + niceDate(list[0].date).replace(/^\w+, /,'') + (list[0].sample ? ' (made up)' : '');
     var tr = $('trendLine') || (function(){ var p = document.createElement('p'); p.id = 'trendLine'; p.className = 'trend'; wrap.appendChild(p); return p; })();
+    tr.hidden = example;
     tr.textContent = hidden ? 'Amounts are hidden.' : (Math.round(since) === 0 ? 'The same as when you started.' : (since > 0 ? 'Up ' : 'Down ') + money(Math.abs(since)) + ' since you started.');
   }
 
   // The demo: six months of looks by a made-up member, so you can see a line.
   function iso(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+  // A made-up six months ending at today's real number, drawn only as an example (never saved).
+  function exampleLine(cur){
+    var out = [], n = 182, seed = 11, endV = cur.cash + cur.invest - cur.owe;
+    function rnd(){ seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+    var swing = Math.max(1500, Math.abs(endV) * 0.15), startV = endV - swing;
+    for (var k = n; k >= 0; k--){
+      if (k > 0 && rnd() < 0.3) continue;
+      var t = (n - k) / n, d = new Date(); d.setDate(d.getDate() - k);
+      var v = k === 0 ? endV : startV + swing * t + swing * 0.12 * Math.sin(t * 11) + (rnd() - 0.5) * swing * 0.1;
+      if (k > 0 && t > 0.42 && t < 0.55) v -= swing * 0.4 * Math.sin((t - 0.42) / 0.13 * Math.PI);
+      out.push({ date: iso(d), cash: Math.round(v), invest: 0, owe: 0 });
+    }
+    return out;
+  }
+
   function seedDemo(){
     if (load().some(function(x){ return !x.sample; })) return; // never mix with your own looks
     var out = [], n = 182, seed = 7;
