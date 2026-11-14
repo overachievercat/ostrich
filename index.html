@@ -80,6 +80,33 @@
   .sample{background:var(--sand);border:1px solid var(--sand-line);border-radius:16px;padding:12px 16px;font-size:15px;margin:0 0 14px}
   .sample b{display:block;font-size:13px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px}
   form.demo input{background:#FBF3E2;border-style:dashed}
+  .concept{background:var(--sand);border:1px solid var(--sand-line);border-radius:16px;padding:10px 14px;font-size:14px;margin:0 0 12px}
+  .concept b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+  .group{font-weight:600;margin:18px 0 6px}
+  details.src{background:var(--card);border:1px solid var(--line);border-radius:16px;margin:8px 0;padding:0}
+  details.src summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;cursor:pointer}
+  details.src summary::-webkit-details-marker{display:none}
+  details.src summary .nm{font-weight:600}
+  details.src summary .how{display:block;font-weight:400;font-size:13px;color:var(--soft)}
+  details.src .more{padding:0 14px 12px;font-size:14px;color:var(--soft)}
+  .st{flex-shrink:0;font-size:12px;font-weight:600;border-radius:999px;padding:3px 9px;background:var(--sage);color:var(--green-ink)}
+  .steps{counter-reset:st;margin:12px 0}
+  .stp{position:relative;padding:0 0 14px 40px}
+  .stp:before{counter-increment:st;content:counter(st);position:absolute;left:0;top:0;width:28px;height:28px;border-radius:50%;background:var(--sand);color:var(--ink);font-weight:600;display:flex;align-items:center;justify-content:center;font-size:14px}
+  .stp h3{color:#F4F1EA}
+  .att{background:#0E182D;border:1px solid #3A4C75;border-radius:16px;padding:14px 16px;font-size:14px;margin:12px 0}
+  .att .r{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-top:1px solid #22345A}
+  .att .r:first-of-type{border-top:0}
+  .att .ok{color:var(--sand);font-weight:600;white-space:nowrap}
+  .stack{margin:14px 0}
+  .bar{display:flex;border-radius:12px;overflow:hidden;min-height:58px;font-size:13px;font-weight:600}
+  .bar>div{padding:8px 10px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #14213D}
+  .bar>div:last-child{border-right:0}
+  .bar small{font-weight:400;opacity:.85}
+  .lvl{font-size:13px;color:#C9D3E3;margin:12px 0 4px}
+  .dark .card{background:#22345A;border-color:#3A4C75;color:#E8EDF5}
+  .dark .card .label{color:var(--sand)}
+  .dark .concept, .dark .concept b{color:var(--ink)}
   [hidden]{display:none!important}
   body.darkbody{background:var(--ink)}
   .dark{color:#E8EDF5}
@@ -187,6 +214,7 @@
       <button class="btn" type="submit" style="margin-top:24px">See my number</button>
       <button class="btn outline" type="button" id="useSample">Try the demo</button>
       <button class="btn outline" type="button" id="useOwn" hidden>Use my own numbers instead</button>
+      <div class="lnks"><button class="lnk" type="button" id="enterConnect">Or connect your accounts (concept)</button></div>
       <p class="fine">Not financial advice. The demo shows made-up numbers.</p>
     </form>
   </section>
@@ -229,6 +257,8 @@
     <div class="lnks">
       <button class="lnk" type="button" id="toSent">What was sent?</button>
       <button class="lnk" type="button" id="toTalk">Want to talk to someone?</button>
+      <button class="lnk" type="button" id="toConnect">Your accounts (concept)</button>
+      <button class="lnk" type="button" id="toPrivate">How the private AI works (concept)</button>
     </div>
 
     <button class="btn" id="again" style="margin-top:18px">Change today's numbers</button>
@@ -247,7 +277,78 @@
     <p><b>Your feelings</b> stay on this device unless you choose to include them.</p>
     <p><b>The reading</b> would run in a sealed, private computer on NEAR AI Cloud. (On the roadmap.)</p>
     <p><b>Check it yourself:</b> the code is open source.</p>
-    <button class="btn outline" id="sentBack" style="margin-top:20px">Close</button>
+    <button class="btn" id="sentPrivate" style="margin-top:20px;background:var(--sand);color:var(--ink)">How the private AI would work (concept)</button>
+    <button class="btn outline" id="sentBack">Close</button>
+  </section>
+
+  <!-- Concept: your accounts, kept up to date -->
+  <section id="v-connect" hidden>
+    <div class="concept"><b>Concept · not connected</b>This shows where Ostrich is going. Nothing on this screen connects to anything yet.</div>
+    <h1>Your number, kept up to date for you.</h1>
+    <p class="soft">Today you type three numbers. Later, Ostrich fills them in every morning from your accounts, read only. Your job stays the same: look once a day. When your money life changes, like a new card or a new wallet, you add it here.</p>
+    <div class="card small"><p class="label">Every morning (concept)</p><p style="margin:0">Your sources refresh before you wake up, and the totals are added up on your phone. You look. Ostrich never moves money and never sees your passwords.</p><p class="soft" style="margin:6px 0 0">Sample: updated today at 6:02am · 11 of 11 sources</p></div>
+
+    <p class="group">Cash</p>
+    <details class="src"><summary><span><span class="nm">Checking and savings</span><span class="how">Your bank, read only, through Plaid</span></span><span class="st">Planned</span></summary><div class="more">You'd sign in at your bank's own page, never in Ostrich. Ostrich would only get balances, never the power to move money.</div></details>
+
+    <p class="group">What you've put away</p>
+    <details class="src"><summary><span><span class="nm">Stocks and retirement</span><span class="how">Your brokerage, read only</span></span><span class="st">Planned</span></summary><div class="more">Balances only, refreshed each morning. No trades, no advice.</div></details>
+    <details class="src"><summary><span><span class="nm">Angel investments</span><span class="how">Added by hand, updated when you know</span></span><span class="st">Planned</span></summary><div class="more">Private companies have no daily price. You'd enter what you put in, and update it when there's news, like a new round.</div></details>
+
+    <p class="group">What you owe</p>
+    <details class="src"><summary><span><span class="nm">Credit cards</span><span class="how">Your card issuer, read only, through Plaid</span></span><span class="st">Planned</span></summary><div class="more">The balance you owe today, not every purchase. Ostrich never reads your transactions.</div></details>
+    <details class="src"><summary><span><span class="nm">Mortgage</span><span class="how">Your lender, read only</span></span><span class="st">Planned</span></summary><div class="more">What's left on the loan. If you'd like, a home value you type in can sit on the other side.</div></details>
+    <details class="src"><summary><span><span class="nm">Student loans</span><span class="how">Your loan servicer, or by hand</span></span><span class="st">Planned</span></summary><div class="more">Where a servicer can't connect, you'd type the balance once a month.</div></details>
+    <details class="src"><summary><span><span class="nm">Car payment</span><span class="how">Your lender, or by hand</span></span><span class="st">Planned</span></summary><div class="more">The balance left on the loan.</div></details>
+
+    <p class="group">Crypto</p>
+    <details class="src"><summary><span><span class="nm">NEAR wallet and DeFi</span><span class="how">Your NEAR account, read only</span></span><span class="st">Planned</span></summary><div class="more">Ostrich would read your public NEAR balances and DeFi positions. A wallet address can only be read, never spent from.</div></details>
+    <details class="src"><summary><span><span class="nm">Wallets on other chains</span><span class="how">Reached through NEAR, or by address</span></span><span class="st">Planned</span></summary><div class="more">NEAR's chain abstraction (Chain Signatures and NEAR Intents) already reaches dozens of other chains. What NEAR can reach, Ostrich could read through NEAR; the rest, you'd add by wallet address.</div></details>
+    <details class="src"><summary><span><span class="nm">Anything else</span><span class="how">Upload a statement, or type it</span></span><span class="st">Planned</span></summary><div class="more">Cash at home, money lent to family, a savings circle. If it's part of your life, it can be part of your number.</div></details>
+
+    <div class="card small" style="margin-top:16px"><p class="label">When your setup changes</p><p style="margin:0">Once a month, Ostrich would ask: "Does this still match your money life?" A new card, a closed account, a new wallet: one tap to add or remove it.</p></div>
+    <button class="btn outline" id="connectBack" style="margin-top:12px">Back</button>
+  </section>
+
+  <!-- Concept: private AI in a TEE, and what NEAR brings -->
+  <section id="v-private" hidden>
+    <div class="concept"><b>Concept · not connected</b>This shows how the private AI reading would work. The prototype has no AI yet and sends nothing.</div>
+    <h1>How the private AI reading would work</h1>
+    <div class="steps">
+      <div class="stp"><h3>On your phone</h3><p style="margin:0">Ostrich adds your accounts up into a few totals. Account names, institutions and wallet addresses stay on your phone.</p></div>
+      <div class="stp"><h3>Into a sealed computer</h3><p style="margin:0">The totals go to an AI running inside a trusted execution environment (TEE) on NEAR AI Cloud: Intel TDX with NVIDIA confidential GPUs. Memory is sealed, so not the cloud operator, not NEAR and not Ostrich can see them.</p></div>
+      <div class="stp"><h3>A proof from the chips</h3><p style="margin:0">The hardware signs an attestation: proof of exactly which model and code ran, inside a genuine enclave. Anyone can check it against Intel's and NVIDIA's attestation services or a public TEE explorer, the way anyone can look up a transaction on a block explorer.</p></div>
+      <div class="stp"><h3>A reading comes back</h3><p style="margin:0">A short, calm reading of your totals, signed by a key that never leaves the enclave, returns to your phone.</p></div>
+    </div>
+
+    <div class="att">
+      <p style="margin:0 0 6px"><b>Attestation for this reading</b> <span style="color:#C9D3E3">(a sample, not a real proof)</span></p>
+      <div class="r"><span>CPU enclave · Intel TDX quote</span><span class="ok">Verified ✓</span></div>
+      <div class="r"><span>GPU enclave · NVIDIA attestation</span><span class="ok">Verified ✓</span></div>
+      <div class="r"><span>Model and code</span><span class="ok">Match ✓</span></div>
+      <div class="r"><span>Reading signed inside the enclave</span><span class="ok">Yes ✓</span></div>
+      <button class="btn outline" type="button" disabled style="margin-top:10px;opacity:.6">Check the proof yourself (concept)</button>
+    </div>
+
+    <h1 style="font-size:26px;margin-top:26px">Where your money data comes from</h1>
+    <p>All your money is real-world finance plus crypto. Crypto is what NEAR can reach plus the rest. Over time, both arrows grow.</p>
+    <p class="lvl">All your money (w = t + k) · illustrative, not to scale</p>
+    <div class="bar"><div style="flex:3;background:#F2D7A1;color:#14213D">Real-world finance (t)<small>Banks, cards, loans, stocks</small></div><div style="flex:2;background:#A9B8D8;color:#14213D">Crypto (k)<small>Every chain</small></div></div>
+    <p class="lvl">Crypto (k = x + n)</p>
+    <div class="bar"><div style="flex:3;background:#C9D3E3;color:#14213D">Reached through NEAR (x)<small>NEAR, plus other chains via Chain Signatures and NEAR Intents</small></div><div style="flex:2;background:#3A4C75;color:#E8EDF5">The rest (n)<small>Add by wallet address</small></div></div>
+
+    <div class="card small" style="margin-top:16px">
+      <p class="label">How Ostrich would read each part</p>
+      <p><b>x, through NEAR:</b> automatically, read only, each morning.</p>
+      <p><b>n, other crypto:</b> by wallet address, until NEAR reaches it.</p>
+      <p style="margin:0"><b>t, real-world finance:</b> Plaid, statements, or by hand.</p>
+    </div>
+    <div class="card small">
+      <p class="label">Both arrows grow</p>
+      <p>Stocks, gold, real estate and more are becoming tokens, so part of t moves into k. More chains become reachable through NEAR, so part of n moves into x.</p>
+      <p style="margin:0">Others are building tools to bring more data into NEAR. Ostrich plans to plug into them as they arrive, rather than build them.</p>
+    </div>
+    <button class="btn outline" id="privateBack" style="margin-top:12px">Back</button>
   </section>
 
   <!-- Want to talk to someone? (screen 34) -->
@@ -288,7 +389,7 @@
   var KEY = 'ostrich.looks.v1';
   var memory = [];
   var canStore = true;
-  var VIEWS = ['v-landing','v-welcome','v-feel','v-enter','v-result','v-sent','v-talk'];
+  var VIEWS = ['v-landing','v-welcome','v-feel','v-enter','v-result','v-sent','v-talk','v-connect','v-private'];
 
   function $(id){ return document.getElementById(id); }
   var art = $('ostrichArt').innerHTML;
@@ -324,11 +425,12 @@
   function currentView(){ var c='v-landing'; VIEWS.forEach(function(v){ if(!$(v).hidden) c=v; }); return c; }
   function show(id){
     VIEWS.forEach(function(v){ $(v).hidden = (v !== id); });
-    $('main').className = (id === 'v-sent') ? 'dark' : '';
-    document.body.className = (id === 'v-sent') ? 'darkbody' : '';
-    document.documentElement.style.background = (id === 'v-sent') ? '#14213D' : '';
+    var dk = (id === 'v-sent' || id === 'v-private');
+    $('main').className = dk ? 'dark' : '';
+    document.body.className = dk ? 'darkbody' : '';
+    document.documentElement.style.background = dk ? '#14213D' : '';
     $('hideAmt').hidden = (id !== 'v-result');
-    document.querySelector('meta[name=theme-color]').setAttribute('content', id === 'v-sent' ? '#14213D' : '#F4F1EA');
+    document.querySelector('meta[name=theme-color]').setAttribute('content', dk ? '#14213D' : '#F4F1EA');
     window.scrollTo(0,0);
   }
   var lastView = 'v-welcome';
@@ -543,6 +645,14 @@
     go('v-sent');
   };
   $('sentBack').onclick = function(){ show('v-result'); };
+  var conceptFrom = 'v-result';
+  function concept(v){ conceptFrom = currentView(); show(v); }
+  $('enterConnect').onclick = function(){ concept('v-connect'); };
+  $('toConnect').onclick = function(){ concept('v-connect'); };
+  $('toPrivate').onclick = function(){ concept('v-private'); };
+  $('sentPrivate').onclick = function(){ concept('v-private'); };
+  $('connectBack').onclick = function(){ show(conceptFrom); };
+  $('privateBack').onclick = function(){ show(conceptFrom); };
 
   $('copy').onclick = function(){
     var rows = [['date','cash','invested','owed','net_worth','made_up','feeling_before','feeling_after']];

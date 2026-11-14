@@ -27,6 +27,13 @@ Built for the NEAR Private AI Hackathon, New York, November 2026.
 - **Your number over time.** After a few looks, one line shows your number since you started, with a tap-to-read value for any day. No red or green.
 - **Made-up numbers.** Try it without typing your own; the demo adds six months of a made-up member's looks so you can see the line, all labelled "made up". Saving your own numbers clears the made-up ones.
 
+## Concept screens (clickable, not connected)
+
+Two sets of screens show where Ostrich is going. Each is labelled "Concept · not connected", and none of them connects to anything or sends anything.
+
+- **Your accounts, kept up to date.** Banks and credit cards through Plaid (read only), brokerage and retirement, angel investments by hand, mortgage, student loans, car payment, a NEAR wallet and DeFi, other chains reached through NEAR or by wallet address, and anything else by statement or by hand. The totals would refresh each morning on your phone; your job stays the same: look once a day, and update your setup when your money life changes.
+- **How the private AI reading would work.** Totals go from your phone to an AI inside a trusted execution environment on NEAR AI Cloud (Intel TDX with NVIDIA confidential GPUs). The hardware signs an attestation that anyone can check, like a transaction on a block explorer. A sample attestation card is shown. A diagram splits all your money into real-world finance and crypto (w = t + k), and crypto into what NEAR reaches, through Chain Signatures and NEAR Intents, plus the rest (k = x + n). As assets are tokenized and NEAR reaches more chains, more of your number can be read automatically.
+
 ## Roadmap (designed, not built)
 
 - **Private AI reading** on NEAR AI Cloud: a short reading of your totals only (never your transactions), run in a private environment so no one, including Ostrich, can see them.
