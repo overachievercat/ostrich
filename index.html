@@ -115,7 +115,7 @@
   .snackart{background:#E8E1D3;border-radius:22px;height:140px;display:flex;align-items:center;justify-content:center;font-size:64px;margin-bottom:14px}
   .keep input{width:100%;height:48px;border:1.5px solid var(--ink);border-radius:16px;background:var(--card);padding:0 14px;font:italic 19px var(--serif);color:var(--ink);margin:8px 0 6px}
   .why{display:block;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:14px 0}
-  .why .tag{margin:0;background:#E8E1D3;color:var(--ink)}
+  .why .tag{margin:0;background:#E8E1D3;color:var(--ink);white-space:nowrap;flex:none}
   .endnote{background:var(--sage);border-radius:18px;padding:12px 16px;margin:16px 0}
   .endnote p{margin:0}
   .snackcard{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--sage);border:0;border-radius:20px;padding:14px 16px;margin:12px 0;color:var(--ink);cursor:pointer;font:inherit}
@@ -318,8 +318,9 @@
       <input id="keepLine" placeholder="My number is not my worth." autocomplete="off">
       <p class="label small" style="margin:0" id="keepNote">Write it in your own words, or keep ours. Tap Done and it's saved on this device: you'll see it under Today's snack on your daily look. Nothing is shared. To keep it somewhere else, copy it into your notes.</p>
     </div>
-    <details class="why"><summary style="display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;list-style:none"><span>Why?</span><span class="tag">Association · message untested</span></summary>
-      <p class="small soft" style="margin:10px 0 0">People whose sense of worth rises and falls with money tend to feel more stress about it (Park and others, 2017, on financially contingent self-worth). That's an association, and this exact message hasn't been tested yet.</p>
+    <details class="why"><summary style="display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;list-style:none"><span><b>The research behind this snack</b> <span class="soft small" id="whyHint">Tap to read ›</span></span><span class="tag">Not yet tested</span></summary>
+      <p class="small soft" style="margin:10px 0 0">People whose sense of worth rises and falls with money tend to feel more stress about it (Park and others, 2017, on financially contingent self-worth). That's a link, not proof that this message helps: nobody has tested it yet.</p>
+      <p class="small soft" style="margin:8px 0 0">Research on money and feelings still has gaps in 2026. Ostrich plans to test its own messages with members, and to share what it learns openly, including what didn't work. (Planned.)</p>
     </details>
     <div class="endnote"><p style="font-family:var(--serif);font-size:19px">That's this snack.</p><p class="soft">What you do next is yours.</p></div>
     <button class="btn" id="snackDone">Done</button>
@@ -836,6 +837,7 @@
   load();
   if (load().length) renderResult(); else show('v-landing');
 })();
+  (function(){ var d=document.querySelector('details.why'); if(d) d.addEventListener('toggle',function(){ var h=document.getElementById('whyHint'); if(h) h.textContent = d.open ? 'Tap to close ⌃' : 'Tap to read ›'; }); })();
 </script>
 </body>
 </html>
